@@ -1,0 +1,42 @@
+path='D:\Neuronal_culture\NAA_Database\';
+filename='P1-20101213_Well01-A1_10dot1_Summary.mat';
+load([path,filename]);
+%%
+ss=size(GCaMPbase);
+
+for i=1:length(cell_list)
+    [II,JJ]=ind2sub(ss,cell_list(i).nuc_list);
+    center=round([mean(II),mean(JJ)]);
+    
+    BW=zeros(512,512);
+    BW(cell_list(i).nuc_list)=1;
+    B_nuc=bwperim(BW,4);
+    
+    BW=zeros(512,512);
+    BW(cell_list(i).pixel_list)=1;
+    B_cell=bwperim(BW,4);
+    Broi=B_nuc|B_cell;
+    
+    rgb=zeros(21,21,3);
+    if center(1)>10 && center(1)<500 && center(2)>10 && center(2)<500    
+        blockG=GCaMPbase(center(1)+(-10:10),center(2)+(-10:10));
+        blockR=mCherry(center(1)+(-10:10),center(2)+(-10:10));
+        Broi=Broi(center(1)+(-10:10),center(2)+(-10:10));
+        
+        figure;subplot(2,4,1);imagesc(blockG);hold on;plot(11,11,'x');axis image;
+        subplot(2,4,2);imagesc(blockR);hold on;plot(11,11,'x');axis image;
+        
+        rgb(:,:,1)=normImage(blockR);
+        rgb(:,:,2)=normImage(blockG);
+
+        subplot(2,4,3);image(rgb);axis image;
+        rgb=reshape(rgb,[],3);
+        rgb(Broi,:)=1;
+        rgb=reshape(rgb,[21,21,3]);
+        subplot(2,4,4);image(rgb);axis image;
+        
+        
+        corr1=corrcoef(blockG(:),blockR(:));
+        
+    end
+end

@@ -1,0 +1,32 @@
+string={'_10dot29_','_10dot1_','_10dot63_'};%'20101213*10dot68_'};
+% string={'0613*_10dot1_','0613*_10dot29_','0613*_10dot244','0613*10dot250','0613*10dot3_','0613*10dot30_','0613*10dot31_','0613*10dot69_','_10dot63_'};
+% string={'10dot354','10dot352','10dot500','0613*_10dot1_','20101220*_10dot1_','20101213*_10dot1_','0613*_10dot29_','20101220*_10dot29_','20101213*_10dot29_','fluo4','ogb1'};
+mutant=NAA_pile_mutants(string);
+%%
+color={'b','r','g','k','c','m','y','g','r'};
+
+figure;hold on;
+t=(1:249)/35;
+for i=1:length(mutant)
+    
+	df_f=mean(squeeze(mutant(i).df_f_med(:,3,:)),2);
+    if strcmp(mutant(i).construct,'10dot68')
+        df_f=median(squeeze(mutant(i).df_f_med(:,3,:)),2);
+    end
+    plot(t,df_f,color{i},'linewidth',2);    
+    legend_text{i}=mutant(i).construct;
+end
+legend(legend_text);
+xlim([0,5]);
+%%
+figure;hold on;
+for i=1:length(mutant)    
+	df_f=mean(squeeze(mutant(i).df_f_med(:,6,:)),2);
+    if strcmp(mutant(i).construct,'10dot68')
+        df_f=median(squeeze(mutant(i).df_f_med(:,6,:)),2);
+    end
+    plot(t,df_f/max(df_f),color{i},'linewidth',2);    
+    legend_text{i}=mutant(i).construct;
+end
+legend(legend_text);
+xlim([0,5]);
