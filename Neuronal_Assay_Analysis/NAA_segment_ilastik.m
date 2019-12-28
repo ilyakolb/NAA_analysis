@@ -1,11 +1,16 @@
 function ROI_list = NAA_segment_ilastik(GCaMPbase, mCherry, dF, type, segmentation_threshold,GCaMPbase2)
 % ilya modifications to segmentation code
-% 11/8/19: trying to use ilastik model to identify ROIs
-%version 4 - removing greenish nuceli for RCaMP96 (no nuclear GFP) - since it's a debree/dead cell, Hod 20140412 
-%version 4 - modified for low F0 GCaMPs - for GCaMP96 there will be no
-%threshold on F0 GCaMP signal
-%version 4 on 20140811 - GCaMP96b class of low F0 variants was added. dF is used for
-%segmentation instead of GCaMPbase
+% variables to assign to cell_list
+% GCaMPbase and GCaMPbase2 are both 512 x 512
+
+% cell_list.
+%           pixel_list: 
+%           mCherry: 
+%           center: 
+%           GCaMPTotal: may not need. 
+
+%%
+% making it work w/ ilastik
 
 DEBUG=0; %% IK MOD change back to DEBUG = 0;
 

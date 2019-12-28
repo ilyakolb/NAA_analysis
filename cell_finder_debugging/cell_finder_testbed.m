@@ -7,5 +7,5 @@ load('C09.mat')
 
 % cell_list = NAA_segment_IK(GCaMPbase - bg, mCherry - bg_cherry, dF, type, segmentation_threshold,GCaMPbase2);
 tic
-cell_list = NAA_segment_IK(GCaMPbase - bg, mCherry - bg_cherry, dF, type, segmentation_threshold,imresize(imRef,4));
+cell_list = NAA_segment_ilastik(GCaMPbase - bg, mCherry - bg_cherry, dF, type, segmentation_threshold,imresize(imRef,4));
 toc
