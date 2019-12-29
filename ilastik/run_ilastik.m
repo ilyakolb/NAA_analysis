@@ -8,7 +8,8 @@ function [h5data, status] = run_ilastik(fileName)
 %         h5data: 1 x 512 x 512 ilastik segmentation output
 %         status: system(  ) output. 0 if success
 
-% TODO: pass this in instead of hardcoding
+% FOR DEBUGGING: launch this from the 96WellXX-AXX/AutoFocus folder
+% TODO: pass ilastik_props in instead of hardcoding
 
 if ispc % running on my PC
     ilastik_props.ilastik_location= 'C:\Program Files\ilastik-1.3.3post1\run-ilastik.bat';
@@ -16,15 +17,15 @@ if ispc % running on my PC
     
     
 else % running on cluster
-    ilastik_props.ilastik_location='';
-    ilastik_props.proj_location = '';
+    ilastik_props.ilastik_location='/groups/genie/home/kolbi/Downloads/ilastik-1.3.3post1-Linux/run_ilastik.sh';
+    ilastik_props.proj_location = '/groups/genie/genie/ilya/code/GECI_NAA_code_20191003/ilastik/gcamp_pixel_classifier.ilp';
 end
 
 ilastik_props.output_filename = 'ilastik_segmentation.h5';
 ilastik_props.datasetName = '/testGCaMP';
 
 assert(isfile(ilastik_props.proj_location), ['ilastik project not found in: ' ilastik_props.proj_location])
-assert(isfile(ilastik_props.ilastik_location), ['run_ilastik.bat not found in: ' ilastik_props.ilastik_location])
+assert(isfile(ilastik_props.ilastik_location), ['run_ilastik not found in: ' ilastik_props.ilastik_location])
 assert(isfile(fileName), ['run_ilastk: ' fileName ' not found!'])
 
 if isfile(ilastik_props.output_filename)

@@ -3,7 +3,7 @@ function NAA_script_ver4_IK(segment_file_ID, nominal_pulse, type, segmentation_t
 %% THIS CAN BE RUN STANDALONE
 % to run in standalone mode, cd to a well, e.g. ...\P5a-20190819_GCaMP96uf\imaging\96Well80-G08
 % modifying to run ilastik from here
-analysis_version = '20170314'; %#ok<NASGU>
+analysis_version = '20170314';
 if (strcmp(type,'GCaMP96b-ERtag'))
     type='OGB1'; %patch for analysis GCaMP data without red channel, Hod 20131216
     segment_file_ID=4;

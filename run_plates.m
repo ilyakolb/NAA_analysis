@@ -19,7 +19,7 @@ if isunix % running on cluster
     cd /groups/genie/genie/ilya/code
     addpath('GECI_NAA_code_20191003')
     cd /groups/genie/genie/ilya/code/GECI_NAA_code_20191003
-    addpath Neuronal_Assay_Analysis Neuronal_Assay_Analysis/compare_mutant Neuronal_Assay_Analysis/export_fig
+    addpath Neuronal_Assay_Analysis Neuronal_Assay_Analysis/compare_mutant Neuronal_Assay_Analysis/export_fig ilastik
     addpath WaveSurfer WaveSurfer/trenches
     GECI_imaging_dir = '/groups/genie/genie/GECIScreenData/GECI_Imaging_Data';
 else
