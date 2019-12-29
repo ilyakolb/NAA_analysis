@@ -194,8 +194,9 @@ else
         end
         
         % run ilastik on name2
-        % this will generate an h5 file
-        % run_ilastik(name2, ilastik_props)
+        % this will return an h5 file
+        [h5data, ~] = run_ilastik(name2);
+        
 		%%
         
 		GCaMPbase2=mean(im2,3);
@@ -283,13 +284,15 @@ else
         if strcmpi(type, 'GCaMP96bf')||strcmpi(type, 'GCaMP96uf')||strcmpi(type, 'RCaMP96uf') || strcmpi(type, 'mngGECO')
             
 			% standard usage
-			cell_list = NAA_segment_IK(GCaMPbase - bg, mCherry - bg_cherry, dF, type, segmentation_threshold,imresize(imRef,4));
+			% cell_list = NAA_segment_IK(GCaMPbase - bg, mCherry - bg_cherry, dF, type, segmentation_threshold,imresize(imRef,4));
 			
             % ilastik testing
-            % cell_list = NAA_segment_ilastik(GCaMPbase - bg, mCherry - bg_cherry, dF, type, segmentation_threshold,imresize(imRef,4));
+            
+            cell_list = NAA_segment_ilastik(GCaMPbase2, mCherry - bg_cherry, dF, h5data);
+            %cell_list = NAA_segment_ilastik(GCaMPbase - bg, mCherry - bg_cherry, dF, type, segmentation_threshold,imresize(imRef,4));
 			
-            % ilastik
-			% original
+            
+            % original
 			% cell_list = NAA_segment_mCherry_ver5_1(GCaMPbase - bg, mCherry - bg_cherry, dF, type, segmentation_threshold,GCaMPbase2);  %version 1.4 is based on GFP nuclear labeling, version 4 modified for low F0 GCaMPs Hod 20140409
 			
         else
