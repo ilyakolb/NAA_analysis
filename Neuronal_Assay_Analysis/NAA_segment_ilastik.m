@@ -53,22 +53,23 @@ for i = 1:length(ROIstats)
     streamCoords_xy = round(ROIstats(i).PixelList .* streamEdge ./ refEdge);
     streamCoords_xy(streamCoords_xy < 1) = 1;
     streamCoords_xy(streamCoords_xy > refEdge) = refEdge;
-    streamCoords_ind = sub2ind(streamSize, streamCoords_xy(:,1), streamCoords_xy(:,2));
-    ROIstats(i).dF_coordinates = streamCoords_ind;
+    streamCoords_ind = sub2ind(streamSize, streamCoords_xy(:,2), streamCoords_xy(:,1));
+    ROIstats(i).dF_coordinates = unique(streamCoords_ind);
     ROIstats(i).dF = mean(dF(streamCoords_ind));
 end
 
 
-% sort according to largest area ?
-
+% sort according to largest area
+[~, sortedIdx] = sort([ROIstats.Area], 'descend');
+ROIstats = ROIstats(sortedIdx);
 
 % reconstruct image
-reconstructedImg = zeros(imgSize);
-for i = 1:length(ROIstats)
-    reconstructedImg(ROIstats(i).PixelIdxList) = 1;
-end
-
-figure, imagesc(reconstructedImg)
+% reconstructedImg = zeros(imgSize);
+% for i = 1:length(ROIstats)
+%     reconstructedImg(ROIstats(i).PixelIdxList) = 1;
+% end
+% 
+% figure, imagesc(reconstructedImg)
 
 
 % rename fields for consistency with rest of code

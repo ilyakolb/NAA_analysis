@@ -287,9 +287,7 @@ else
 			% cell_list = NAA_segment_IK(GCaMPbase - bg, mCherry - bg_cherry, dF, type, segmentation_threshold,imresize(imRef,4));
 			
             % ilastik testing
-            
             cell_list = NAA_segment_ilastik(GCaMPbase2, mCherry - bg_cherry, dF, h5data);
-            %cell_list = NAA_segment_ilastik(GCaMPbase - bg, mCherry - bg_cherry, dF, type, segmentation_threshold,imresize(imRef,4));
 			
             
             % original
@@ -325,8 +323,11 @@ currDir=pwd;
 if (~ismac && ~ispc) || (ispc && ismember(currDir(1),local))
     location = 'Local';
 else
-    display('Files on network drive, use move local method');
-    location = 'Network';
+    % 12/29/19: testing to see if this makes a difference
+    location = 'Local';
+    % original code below:
+    % display('Files on network drive, use move local method');
+    % location = 'Network';
 end
 if strcmpi(type, 'FRET')
     [fmeanCFP, fmeanYFP, dffmapCFP, dffmapYFP, bgCFP, bgYFP, baseCFP, baseYFP, respCFP, respYFP] = NAA_MeasureFmeanFRET(filenames, cell_list, topbox, botbox, location); %#ok<ASGLU>

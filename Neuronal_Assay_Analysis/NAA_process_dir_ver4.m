@@ -37,6 +37,8 @@ if length(files)>3 && (strncmp(plate_folder_name, 'Well', 4) || strncmp(plate_fo
 			if WS % if wavesurfer
                 NAA_script_ver4_IK(segment_file_ID, nominal_pulse, type, segmentation_threshold);
             else
+                %12/29/19
+                %TODO: update this script to run ilastik as well
 				NAA_script_ver4(segment_file_ID, nominal_pulse, type, segmentation_threshold);
 			end
         catch ME	
