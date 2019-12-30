@@ -33,7 +33,7 @@ if isfile(ilastik_props.output_filename)
 end
 
 ilastik_bat_str = ['"' ilastik_props.ilastik_location '"'];
-ilastik_params = ['--headless --project="' ilastik_props.proj_location '" --export_source="Simple Segmentation"'];
+ilastik_params = ['--headless --project="' ilastik_props.proj_location '" --export_source="Simple Segmentation" --readonly'];
 ilastik_output_params = ['--output_filename_format="' ilastik_props.output_filename '"'];
 tiffFile = ['"' fileName '"'];
 
@@ -42,11 +42,15 @@ ilastik_cmd = [ilastik_bat_str ' ' ilastik_params ' ' ilastik_output_params ' ' 
 disp(ilastik_cmd)
 [status, cmdout] = system(ilastik_cmd); % launch headless ilastik
 
+assert(~status, ['error running ilastik: ' cmdout])
 h5data = h5read("ilastik_segmentation.h5", ilastik_props.datasetName);
 
+pause(2)
 if status
     warning(cmdout)
 end
+
+pause(2)
 
 % read in generated data
 h5data = h5read(ilastik_props.output_filename, ilastik_props.datasetName);

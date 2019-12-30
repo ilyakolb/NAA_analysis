@@ -208,9 +208,9 @@ classdef Construct < Singleton
                 resp_time_SNR=170:500;
             elseif strcmp(type,'uf') || strcmpi(type,'CO') %added by Hod 20170728, modified IK 11/18/19 to include mngGECO
                 % NOTE: use corrected for all except mngGECO?
-                base_time= 300:360; %for mngGECO % corrected: 150:180
-                resp_time= 420:900; %for mngGECO % corrected: 210:240
-                resp_time_SNR= 420:1000; %for mngGECO % corrected: 210:500
+                base_time= 150:180 ; %300:360 %for mngGECO % corrected: 
+                resp_time= 210:240; %420:900 % for mngGECO % corrected: 
+                resp_time_SNR= 210:500; %420:1000 for mngGECO % corrected: 210:500
             else
                 base_time=1:23;
                 resp_time=24:70; %modified by Hod 16Jan2014, to improve d-prime accuracy

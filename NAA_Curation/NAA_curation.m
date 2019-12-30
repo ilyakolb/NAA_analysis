@@ -117,12 +117,12 @@ classdef NAA_curation < Singleton
         function buildInterface(obj)
             % Restore the window position if possible.
             addlProps = {};
-            if ispref('GENIE_NAA_Curation', 'MainWindow_Position')
-                prevPos = getpref('GENIE_NAA_Curation', 'MainWindow_Position', []);
-                if ~isempty(prevPos)
-                    addlProps = {'Position', prevPos};
-                end
-            end
+%             if ispref('GENIE_NAA_Curation', 'MainWindow_Position')
+%                 prevPos = getpref('GENIE_NAA_Curation', 'MainWindow_Position', []);
+%                 if ~isempty(prevPos)
+%                     addlProps = {'Position', prevPos};
+%                 end
+%             end
             
             % Create the main window.
             obj.mainWindow = figure(...

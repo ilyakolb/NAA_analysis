@@ -35,9 +35,9 @@ clc
 %                 stim_sync_channel : = 4 for Rig 1, =1 for Rig 2
 %                 andor_sync_channel: = 3 for Rig 1, =2 for Rig 2
 WS = 1;
-WSoptions.nRecsPerWell = 8;
-WSoptions.stim_sync_channel = 1;
-WSoptions.andor_sync_channel = 2;
+WSoptions.nRecsPerWell = 4;
+WSoptions.stim_sync_channel = 4;
+WSoptions.andor_sync_channel = 3;
 
 % set to 1 to recalculate segmentation in NAA_process_dir_ver4
 reprocessFlag = 1; 
@@ -46,11 +46,15 @@ if ~WS
     warning('WS is 0: assuming this is an old experiment that used ephus!!')
 end
 
-plates = {
-    fullfile(GECI_imaging_dir, '20191112_GCaMP96uf_analyzed/P25a-20191028_mngGECO'),...
-    fullfile(GECI_imaging_dir, '20191112_GCaMP96uf_analyzed/P26a-20191028_mngGECO'),...
-    fullfile(GECI_imaging_dir, '20191112_GCaMP96uf_analyzed/P27a-20191028_mngGECO'),...
-    fullfile(GECI_imaging_dir, '20191112_GCaMP96uf_analyzed/P28a-20191028_mngGECO')};
+plates = {fullfile(GECI_imaging_dir, '20191209_GCaMP96uf_raw/P1a-20191125_GCaMP96uf'),...
+    fullfile(GECI_imaging_dir, '20191209_GCaMP96uf_raw/P2a-20191125_GCaMP96uf'),...
+    fullfile(GECI_imaging_dir, '20191209_GCaMP96uf_raw/P3a-20191125_GCaMP96uf'),...
+    fullfile(GECI_imaging_dir, '20191209_GCaMP96uf_raw/P4a-20191125_GCaMP96uf')};
+
+%     fullfile(GECI_imaging_dir, '20191112_GCaMP96uf_analyzed/P25a-20191028_mngGECO'),...
+%     fullfile(GECI_imaging_dir, '20191112_GCaMP96uf_analyzed/P26a-20191028_mngGECO'),...
+%     fullfile(GECI_imaging_dir, '20191112_GCaMP96uf_analyzed/P27a-20191028_mngGECO'),...
+%     fullfile(GECI_imaging_dir, '20191112_GCaMP96uf_analyzed/P28a-20191028_mngGECO')};
 
 % plates = {
 %     fullfile(GECI_imaging_dir,'20170717_GCaMP96uf_analyzed/P1a-20170703_GCaMP96uf'),...
