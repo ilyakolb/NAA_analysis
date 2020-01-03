@@ -16,8 +16,8 @@ function ROI_list = NAA_segment_ilastik(refImage, mCherryImage, dF, h5data)% (GC
 %           center: ref image coordinates of cell
 %           GCaMPTotal: may not need. 
 
-min_cell_area = 30;
-max_cell_area = 180;
+min_cell_area = 40;
+max_cell_area = 200;
 %%
 % making it work w/ ilastik
 

@@ -39,7 +39,7 @@ tiffFile = ['"' fileName '"'];
 
 ilastik_cmd = [ilastik_bat_str ' ' ilastik_params ' ' ilastik_output_params ' ' tiffFile];
 
-disp(ilastik_cmd)
+% disp(ilastik_cmd)
 [status, cmdout] = system(ilastik_cmd); % launch headless ilastik
 
 assert(~status, ['error running ilastik: ' cmdout])
