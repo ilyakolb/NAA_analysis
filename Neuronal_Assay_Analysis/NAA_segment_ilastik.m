@@ -9,15 +9,22 @@ function ROI_list = NAA_segment_ilastik(refImage, mCherryImage, dF, h5data)% (GC
 %        h5data: 1x512x512 segmentation data from ilastik. 1 is cell, 2 is
 %        background
 
-% cell_list.
-%           pixel_list: linearized ref coords. convert_cell_coordinates
-%                       converts these to dF_coordinates (stream coords)
-%           mCherry: avg mCherry fluorescence in each ROI (?)
-%           center: ref image coordinates of cell
-%           GCaMPTotal: may not need. 
+% RETURNS: ROI_list [Ncells x 1] array
+% ROI_list:
+%     npixel: num pixels in each ROI (ref image coords)
+%     center: ROI center (ref image coords)
+%     pixel_list: linearized ref coords
+%     pixel_list_xy: 
+%     mCherry: avg mCherry fluorescence in each ROI
+%     dF_coordinates: linearized stream coords
+%     dF: delta F (stream coords)
+%     Eccentricity: 0 (cicle) to 1 (line). Used to remove sausage-like
+%     segments (probably dendrites)
 
-min_cell_area = 40;
-max_cell_area = 200;
+min_cell_area = 50;
+max_cell_area = 250;
+max_eccentricity = .84;
+% 2/10/20: going to increase min_cell_area, max_cell_area
 %%
 % making it work w/ ilastik
 
@@ -37,13 +44,17 @@ assert(all(dataSize == imgSize), 'ref image size =/= h5 segmentation size')
 assert(all(size(mCherryImage) == imgSize), 'ref image size =/= mCherry image size')
 
 % CC = bwconncomp(h5data_);
-ROIstats = regionprops(h5data_, 'PixelIdxList', 'PixelList', 'Area', 'Centroid');
+ROIstats = regionprops(h5data_, 'PixelIdxList', 'PixelList', 'Area', 'Centroid', 'Eccentricity');
 
 % condition the stats array: remove tiny and huge blobs that are not cells
 ROIstats([ROIstats.Area] < min_cell_area | [ROIstats.Area] > max_cell_area) = [];
 
 % remove ROIs touching boundaries
 ROIstats(arrayfun(@(x) any(x.PixelList(:) == 1)  | any(x.PixelList(:) == refEdge), ROIstats)) = [];
+
+% remove very eccentric ROIs (probably dendrites)
+ROIstats([ROIstats.Eccentricity] > max_eccentricity) = [];
+
 
 % add mCherry, dF_coordinates, dF fields
 for i = 1:length(ROIstats)
@@ -74,7 +85,7 @@ ROIstats = ROIstats(sortedIdx);
 
 % rename fields for consistency with rest of code
 if ~isempty(ROIstats)
-    ROI_list = cell2struct( struct2cell(ROIstats), {'npixel', 'center', 'pixel_list', 'pixel_list_xy', 'mCherry', 'dF_coordinates', 'dF'});
+    ROI_list = cell2struct( struct2cell(ROIstats), {'npixel', 'center', 'Eccentricity', 'pixel_list', 'pixel_list_xy', 'mCherry', 'dF_coordinates', 'dF'});
 else
     ROI_list = {};
 end

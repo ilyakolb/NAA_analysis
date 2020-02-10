@@ -6,7 +6,10 @@ function ROI_list = NAA_segment_IK(GCaMPbase, mCherry, dF, type, segmentation_th
 %version 4 on 20140811 - GCaMP96b class of low F0 variants was added. dF is used for
 %segmentation instead of GCaMPbase
 % IK modified 11/15/19 for Abhi's mng-GECO
-DEBUG=1; %% IK MOD change back to DEBUG = 0;
+% IK modified 2/10/2020 to benchmark against ilastik
+%% DO NOT USE! Use ilastik version
+
+DEBUG=0; %% IK MOD change back to DEBUG = 0;
 
 if strcmpi(type, 'GCaMP96bf')||strcmpi(type, 'GCaMP96uf')||strcmpi(type, 'RCaMP96uf') || strcmpi(type, 'mngGECO')
     GCaMPbase=GCaMPbase2;
@@ -207,7 +210,7 @@ for i=1:length(col)
     %         end
     %% end of addition
     
-    if length(pixel_list)>length(nuc_list)
+    if length(pixel_list)>= length(nuc_list)
         [row,col]=ind2sub(ss,pixel_list);
         ROI.nuc_list=nuc_list;
         ROI.pixel_list=pixel_list;
@@ -409,8 +412,7 @@ end
 remove_ind=logical(remove_ind);
 dark_list_shape = ROI_list(remove_ind);
 
-% IKMOD -- doesn't seem to do much. keep uncommented
-ROI_list = ROI_list(~remove_ind);
+% ROI_list = ROI_list(~remove_ind);
 
 if ~isempty(ROI_list)
     %% remove ROI that has dark green signal
