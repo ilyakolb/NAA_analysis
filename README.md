@@ -1,29 +1,31 @@
 GECI Neuronal Analysis 
 ======================================================================
-12/27/19
+2/20/2020
 
 Processes and analyzes the results of GECI screening on the GENIE pipeline. Allows for manual curation of good/bad wells on a single-well basis. Creates mat structures for meta-analysis.
 
 Author
 ======
-Ilya Kolb
-Janelia Research Campus
-Howard Hughes Medical Institute
-kolbi@janelia.hhmi.org
+
+Ilya Kolb  
+GENIE Project  
+Janelia Research Campus  
+Howard Hughes Medical Institute  
+kolbi@janelia.hhmi.org  
 
 (original code by H Dana, TW Chen, D Kim)
 
 Requirements
 ============
 
-MATLAB 2017a+
-Image Processing Toolbox
+MATLAB 2017a+  
+Image Processing Toolbox  
 
 
 Installation
 ============
-Add ./NAA_Curation, ./Neuronal_Assay_Analysis to MATLAB path
-Make sure nearline server is mounted if you need historical GCaMPs
+Add ./NAA_Curation, ./Neuronal_Assay_Analysis to MATLAB path  
+Make sure nearline server is mounted if you need historical GCaMPs. Since all data is now on dm11, I disabled searching nearline.  
 
 
 Running plates (run on Janelia LSF cluster)
@@ -47,19 +49,18 @@ Curate data (run on PC)
 
 NAA_Curation shortcuts
 ===========
-Plate view
-L,R,U,D keys: navigate between wells
-SPACE: go to well
-BACKSPACE: quick remove well and select reason
+Plate view  
+L,R,U,D keys: navigate between wells  
+SPACE: go to well  
+BACKSPACE: quick remove well and select reason  
 
-Well view
-SPACE: go back
-BACKSPACE: remove well and select reason
+Well view  
+SPACE: go back  
+BACKSPACE: remove well and select reason  
 
 
 Notes
 =====
 - Run plates on LSF, compile data and curate on PC
-- Moved from nearline to dm11 for implementation on cluster
 - Not recently tested with any variants other than GCaMP96uf
 - Also see instructions in run_plates.m

@@ -11,8 +11,10 @@ tifFiles = {tifFiles.name}';
 h5Files = dir(fullfile(imageDir, ['*' segmentationToken]));
 num_h5_files = length(h5Files);
 
-for i = 1:num_h5_files
+for i = 1:7 %num_h5_files -- only first 7 entries
     h5Name = h5Files(i).name;
+    wellName = strsplit(h5Name);
+    wellName = wellName{2}(11:13);
     % load reference image
     refImgName = [h5Name(1:strfind(h5Name,segmentationToken)-1) '.tif'];
     
@@ -28,25 +30,29 @@ for i = 1:num_h5_files
     h5data = double(h5data);
     
     % ilastik
-%     ROI_list = NAA_segment_ilastik(refImage, mCherryImage, dF, h5data);
-%     dummyImg = zeros(size(refImage));
-%     all_pixels = vertcat(ROI_list.pixel_list);
-%     dummyImg(all_pixels) = 1;
-%     B = bwboundaries(dummyImg);
-%     refImageToShow = zeros([size(refImage) 3]); % show rgb image
-%     refImageToShow(:,:,2) = mat2gray( imadjust(refImage));
-%     figure('name', 'ilastik'); imshow(refImageToShow)
-%     for j = 1:length(B)
-%         boundary = B{j};
-%         hold on,plot(boundary(:,2), boundary(:,1), 'w', 'LineWidth', 1)
-%         hold on,plot(boundary(:,2)+1, boundary(:,1)+1, 'k', 'LineWidth', 1)
-%     end
+    ROI_list = NAA_segment_ilastik(refImage, mCherryImage, dF, h5data);
+    dummyImg = zeros(size(refImage));
+    all_pixels = vertcat(ROI_list.pixel_list);
+    dummyImg(all_pixels) = 1;
+    B = bwboundaries(dummyImg);
+    refImageToShow = zeros([size(refImage) 3]); % show rgb image
+    refImageToShow(:,:,2) = mat2gray( imadjust(refImage));
+    figure('name', ['ilastik vs Hod ' wellName], 'position', [428   583   952   329]); 
+    subplot(1,2,1)
+    imshow(refImageToShow)
+    for j = 1:length(B)
+        boundary = B{j};
+        hold on,plot(boundary(:,2), boundary(:,1), 'w', 'LineWidth', 1)
+        hold on,plot(boundary(:,2)+1, boundary(:,1)+1, 'k', 'LineWidth', 1)
+    end
     
     % Hod's original code
     cell_list = NAA_segment_IK(double(refImage), double(mCherryImage), double(dF), 'GCaMP96uf', 0, double(refImage));
     refImageToShow = zeros([size(refImage) 3]); % show rgb image
     refImageToShow(:,:,2) = mat2gray( imadjust(refImage));
-    figure('name', 'Hod'); imshow(refImageToShow)
+    
+    subplot(1,2,2)
+    imshow(refImageToShow)
     for j = 1:length(cell_list)
         dummyImg = zeros(size(refImage));
         dummyImg(cell_list(j).pixel_list) = 1;

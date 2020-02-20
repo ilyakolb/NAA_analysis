@@ -259,7 +259,7 @@ for i=1:length(ROI_list)
         remove_ind(i)=1;
     end
 end
-% ROI_list=ROI_list(~remove_ind);
+ROI_list=ROI_list(~remove_ind);
 
 %%  remove really dark cells likely from over segmentation
 
