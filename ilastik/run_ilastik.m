@@ -13,12 +13,12 @@ function [h5data, status] = run_ilastik(fileName)
 
 if ispc % running on my PC
     ilastik_props.ilastik_location= 'C:\Program Files\ilastik-1.3.3post1\run-ilastik.bat';
-    ilastik_props.proj_location = 'Z:\ilya\code\GECI_NAA_code_20191003\ilastik\gcamp_pixel_classifier.ilp';
+    ilastik_props.proj_location = 'Z:\ilya\code\GECI_NAA_code\ilastik\gcamp_pixel_classifier.ilp';
     
     
 else % running on cluster
     ilastik_props.ilastik_location='/groups/genie/home/kolbi/Downloads/ilastik-1.3.3post1-Linux/run_ilastik.sh';
-    ilastik_props.proj_location = '/groups/genie/genie/ilya/code/GECI_NAA_code_20191003/ilastik/gcamp_pixel_classifier.ilp';
+    ilastik_props.proj_location = '/groups/genie/genie/ilya/code/GECI_NAA_code/ilastik/gcamp_pixel_classifier.ilp';
 end
 
 ilastik_props.output_filename = 'ilastik_segmentation.h5';
