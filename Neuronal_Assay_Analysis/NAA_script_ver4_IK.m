@@ -1,9 +1,10 @@
 function NAA_script_ver4_IK(segment_file_ID, nominal_pulse, type, segmentation_threshold)
-%% modified by IK 5/23/19 to use wavesurfer instead of ephus
-%% THIS CAN BE RUN STANDALONE
-% to run in standalone mode, cd to a well, e.g. ...\P5a-20190819_GCaMP96uf\imaging\96Well80-G08
-% modifying to run ilastik from here
-analysis_version = '20170314';
+%% RUNNING IN STANDALONE:
+% navigate to a well directory e.g. Z:\GECIScreenData\GECI_Imaging_Data\20190827_GCaMP96uf_analyzed\P6a-20190812_GCaMP96uf\imaging\96Well08-A08
+% RUN: 
+% NAA_script_ver4_IK(4, [1,3,10,160], 'GCaMP96uf', '0')
+
+analysis_version = '20200305';
 if (strcmp(type,'GCaMP96b-ERtag'))
     type='OGB1'; %patch for analysis GCaMP data without red channel, Hod 20131216
     segment_file_ID=4;
@@ -182,15 +183,13 @@ else
 		imRef = mean(im(:,:,300:400),3);
         if all(size(im2) == [256 256])
 			disp('WARNING: Wrong Autofocus size, rescaling to 512 x 512')
+            
+            % scale up imRef to 512 x 512 and save. update name2
+            im2 = imresize(imRef, 4);
+            name2_mod = ['scaled_' name2];
+            imwrite(uint16(im2), name2_mod);
+            name2 = name2_mod;
 
-			blackIm = zeros(512);
-			blackIm(1:256,1:256) = im2;
-			im2 = blackIm;
-
-%           
-			cd(current_path)
-% 			im2 = imresize(im(:,:,300:400),4);
-% 			im2 = mean(im2, 3);
         end
         
         % run ilastik on name2
@@ -283,16 +282,8 @@ else
 %         end
         if strcmpi(type, 'GCaMP96bf')||strcmpi(type, 'GCaMP96uf')||strcmpi(type, 'RCaMP96uf') || strcmpi(type, 'mngGECO')
             
-			% standard usage
-			% cell_list = NAA_segment_IK(GCaMPbase - bg, mCherry - bg_cherry, dF, type, segmentation_threshold,imresize(imRef,4));
-			
-            % ilastik testing
+            % ilastik analysis
             cell_list = NAA_segment_ilastik(GCaMPbase2, mCherry - bg_cherry, dF, h5data);
-			
-            
-            % original
-			% cell_list = NAA_segment_mCherry_ver5_1(GCaMPbase - bg, mCherry - bg_cherry, dF, type, segmentation_threshold,GCaMPbase2);  %version 1.4 is based on GFP nuclear labeling, version 4 modified for low F0 GCaMPs Hod 20140409
-			
         else
             error(['Type ' type ' is unrecognized!'])
             % cell_list = NAA_segment_mCherry_ver5_2(GCaMPbase - bg, mCherry - bg_cherry, dF, type, segmentation_threshold);  %version 1.4 is based on GFP nuclear labeling, version 4 modified for low F0 GCaMPs Hod 20140409

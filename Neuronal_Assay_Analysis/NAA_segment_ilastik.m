@@ -24,7 +24,6 @@ function ROI_list = NAA_segment_ilastik(refImage, mCherryImage, dF, h5data)% (GC
 min_cell_area = 50;
 max_cell_area = 250;
 max_eccentricity = .84;
-% 2/10/20: going to increase min_cell_area, max_cell_area
 %%
 % making it work w/ ilastik
 

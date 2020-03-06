@@ -43,7 +43,7 @@ ilastik_cmd = [ilastik_bat_str ' ' ilastik_params ' ' ilastik_output_params ' ' 
 [status, cmdout] = system(ilastik_cmd); % launch headless ilastik
 
 assert(~status, ['error running ilastik: ' cmdout])
-h5data = h5read("ilastik_segmentation.h5", ilastik_props.datasetName);
+% h5data = h5read("ilastik_segmentation.h5", ilastik_props.datasetName);
 
 pause(2)
 if status
