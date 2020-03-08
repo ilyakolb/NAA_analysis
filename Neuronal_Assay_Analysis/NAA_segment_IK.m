@@ -265,6 +265,9 @@ ROI_list=ROI_list(~remove_ind);
 
 if ~isempty(segmentation_threshold)
     %% adding adaptive threshold - Hod Dana 04Apr2013, modifying this threshold Hod 20130815
+    if ischar(segmentation_threshold)
+        segmentation_threshold = str2double(segmentation_threshold);
+    end
     if segmentation_threshold==0
         %             GClist=sort(reshape(GCaMPbase,1,[]));
         %             th=GClist(round(0.96*length(GClist)));
@@ -412,7 +415,7 @@ end
 remove_ind=logical(remove_ind);
 dark_list_shape = ROI_list(remove_ind);
 
-% ROI_list = ROI_list(~remove_ind);
+ROI_list = ROI_list(~remove_ind);
 
 if ~isempty(ROI_list)
     %% remove ROI that has dark green signal
@@ -484,8 +487,7 @@ if ~isempty(ROI_list)
         remove_ind = v2<disc;
         dark_list_activity = ROI_list(remove_ind);
 
-        % IKMOD 12/25/19: this removes all cells. keep commented out
-        % ROI_list = ROI_list(~remove_ind);
+        ROI_list = ROI_list(~remove_ind);
         
         if ~isdeployed && DEBUG
             figure; subplot(2,2,1); plot(v1,v2,'.'); axis square;
@@ -527,4 +529,3 @@ if ~isempty(ROI_list)
         end
     end
 end
-

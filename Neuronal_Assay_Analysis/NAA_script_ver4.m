@@ -1,7 +1,12 @@
 function NAA_script_ver4(segment_file_ID, nominal_pulse, type, segmentation_threshold)
-% IK modified 12/9/19 ensuring back-compatibility with ephus
+% use this to re-analyze old imaging directories (2018 and older)
+%% RUNNING IN STANDALONE:
+% navigate to a well directory e.g. Z:\GECIScreenData\GECI_Imaging_Data\20180619_GCaMP96uf_analyzed\P1a-20180604_GCaMP96uf\imaging\96Well09-A09
+% RUN: 
+% NAA_script_ver4(4, [1,3,10,160], 'GCaMP96uf', '0')
+%% 
 
-analysis_version = '20170314'; %#ok<NASGU>
+analysis_version = '20200305';
 if (strcmp(type,'GCaMP96b-ERtag'))
     type='OGB1'; %patch for analysis GCaMP data without red channel, Hod 20131216
     segment_file_ID=4;
@@ -13,7 +18,7 @@ fmax=[];
 imfmax=[];
 
 %modifued by Hod 28Mar2013
-if strcmp(type,'FRET96');
+if strcmp(type,'FRET96')
     type='FRET';
 end
 % end of modification
@@ -175,19 +180,22 @@ else
 		%% IK (20190728) bugfix
         % for 20190723_GCaMP96uf_raw where AutoFocus images are 256x256
         % instead of 512x512, use stream pics instead
-		imRef = mean(im(:,:,300:400),3);
-		if all(size(im2) == [256 256])
-			disp('WARNING: Wrong Autofocus size, rescaling to 512 x 512')
-
-			blackIm = zeros(512);
-			blackIm(1:256,1:256) = im2;
-			im2 = blackIm;
-
-%           
-			cd(current_path)
-% 			im2 = imresize(im(:,:,300:400),4);
-% 			im2 = mean(im2, 3);
-		end
+        imRef = mean(im(:,:,300:400),3);
+        if all(size(im2) == [256 256])
+            disp('WARNING: Wrong Autofocus size, rescaling to 512 x 512')
+            
+            % scale up imRef to 512 x 512 and save. update name2
+            im2 = imresize(imRef, 4);
+            name2_mod = ['scaled_' name2];
+            imwrite(uint16(im2), name2_mod);
+            name2 = name2_mod;
+            
+        end
+        
+        % run ilastik on name2
+        % this will return an h5 file
+        % [h5data, ~] = run_ilastik(name2);
+        
 		%%
         
 		GCaMPbase2=mean(im2,3);
@@ -267,17 +275,20 @@ else
         cell_max = 200;
     else
         %add option to calculate adaptive segmentation threshold - value=0
-        a=strfind(filenames(1),'327');
-        b=strfind(filenames(1),'329');
-        if ~isempty(a{1,1})||~isempty(b{1,1}) %patch for analyzing Bito's R-CaMP2 variants without GFP in nuclei. Hod 20150408
-               type='RCaMP96';
-        end
-        if strcmpi(type, 'GCaMP96bf')||strcmpi(type, 'GCaMP96uf')||strcmpi(type, 'RCaMP96uf')
+%         a=strfind(filenames(1),'327');
+%         b=strfind(filenames(1),'329');
+%         if ~isempty(a{1,1})||~isempty(b{1,1}) %patch for analyzing Bito's R-CaMP2 variants without GFP in nuclei. Hod 20150408
+%                type='RCaMP96';
+%         end
+        if strcmpi(type, 'GCaMP96bf')||strcmpi(type, 'GCaMP96uf')||strcmpi(type, 'RCaMP96uf') || strcmpi(type, 'mngGECO')
+            
+            % doing old segmentation for older data
             cell_list = NAA_segment_IK(GCaMPbase - bg, mCherry - bg_cherry, dF, type, segmentation_threshold,imresize(imRef,4));
-
-            % cell_list = NAA_segment_mCherry_ver5_1(GCaMPbase - bg, mCherry - bg_cherry, dF, type, segmentation_threshold,GCaMPbase2);  %version 1.4 is based on GFP nuclear labeling, version 4 modified for low F0 GCaMPs Hod 20140409
+            % ilastik analysis
+            % cell_list = NAA_segment_ilastik(GCaMPbase2, mCherry - bg_cherry, dF, h5data);
         else
-            cell_list = NAA_segment_mCherry_ver5_2(GCaMPbase - bg, mCherry - bg_cherry, dF, type, segmentation_threshold);  %version 1.4 is based on GFP nuclear labeling, version 4 modified for low F0 GCaMPs Hod 20140409
+            error(['Type ' type ' is unrecognized!'])
+            % cell_list = NAA_segment_mCherry_ver5_2(GCaMPbase - bg, mCherry - bg_cherry, dF, type, segmentation_threshold);  %version 1.4 is based on GFP nuclear labeling, version 4 modified for low F0 GCaMPs Hod 20140409
         end
         cell_max = 500;
     end
@@ -292,15 +303,19 @@ end
 save(seg_file_name, seg_file_fields{:});
 
 if length(cell_list) > cell_max  ||  isempty(cell_list)
+    % if no cells found, get rid of any segmentation results that may have
+    % been left over from previous analysis
+    disp('No cells found! Deleting segmentation_cherry.mat and FmeanROI_cherry.mat')
+    if isfile('segmentation_cherry.mat')
+        delete('segmentation_cherry.mat')
+    end
+    
+    if isfile('FmeanROI_cherry.mat')
+        delete('FmeanROI_cherry.mat')
+    end
     return;
 end
 
-%
-%changed by Hod 04Mar2013 - problem with ionomycin data
-%changed back by Hod to includr good ionomycin data (folder name in lower
-%case letters)
-%put on comment until file naming and arrangements would be clarified - Hod 20131018
-%
 
 %
 load(seg_file_name);
@@ -310,8 +325,11 @@ currDir=pwd;
 if (~ismac && ~ispc) || (ispc && ismember(currDir(1),local))
     location = 'Local';
 else
-    display('Files on network drive, use move local method');
-    location = 'Network';
+    % 12/29/19: testing to see if this makes a difference
+    location = 'Local';
+    % original code below:
+    % display('Files on network drive, use move local method');
+    % location = 'Network';
 end
 if strcmpi(type, 'FRET')
     [fmeanCFP, fmeanYFP, dffmapCFP, dffmapYFP, bgCFP, bgYFP, baseCFP, baseYFP, respCFP, respYFP] = NAA_MeasureFmeanFRET(filenames, cell_list, topbox, botbox, location); %#ok<ASGLU>
@@ -325,7 +343,7 @@ end
 
 
 %% EPHUS STUFF
-% IK
+
 xsgfiles=dir('*.xsg');
 datenum=[xsgfiles.datenum];
 [~, ind]=sort(datenum);
