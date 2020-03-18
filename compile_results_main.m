@@ -24,5 +24,5 @@ GECI_imaging_dir = 'Z:\GECIScreenData\GECI_Imaging_Data';
 % compile_results(fullfile(GECI_imaging_dir, '20170711_GCaMP96uf_analyzed'),'GCaMP96uf','0')
 % compile_results(fullfile(GECI_imaging_dir, '20180619_GCaMP96uf_analyzed'),'GCaMP96uf','0')
 
-compile_results(fullfile(GECI_imaging_dir, '20180820_GCaMP96uf_analyzed'),'GCaMP96uf','0')
+compile_results(fullfile(GECI_imaging_dir, '20200310_GCaMP96uf_raw'),'GCaMP96uf','0')
 

@@ -2,8 +2,6 @@ function [h5data, status] = run_ilastik(fileName)
 %RUN_ILASTIK: runs ilastik segmentation engine. Called by NAA_script_ver4_IK
 % INPUTS:
 %        fileName: AutoFocusRef file (just filename)
-%        ilastik_props.
-%                      ilastik_location: location of run-ilastik.bat
 % OUTPUTS:
 %         h5data: 1 x 512 x 512 ilastik segmentation output
 %         status: system(  ) output. 0 if success

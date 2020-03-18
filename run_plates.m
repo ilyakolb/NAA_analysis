@@ -13,9 +13,9 @@
 % 
 
 %%
-% set to 1 if Wavesurfer was used in run
 
-if isunix % running on cluster
+% Edit these absolute paths if running for the first time!
+if isunix % if running on cluster
     cd /groups/genie/genie/ilya/code
     addpath('GECI_NAA_code')
     cd /groups/genie/genie/ilya/code/GECI_NAA_code
@@ -25,19 +25,23 @@ if isunix % running on cluster
 else
     GECI_imaging_dir = 'Z:\GECIScreenData\GECI_Imaging_Data';
 end
-% GECI_NAA_code_20191003 folder
-
 
 clc
+
+% WS: set to 1 if Wavesurfer was used in run
+% NOTE: all plates prior to 2019 (i.e. all plates in the plates_2018
+% variable below) were run WITHOUT Wavesurfer, so set  WS = 0 if analyzing
+% those
+
+WS = 1;
 
 %       WSoptions.
 %                 nRecsPerWell: num stim pulses (e.g. 4)
 %                 stim_sync_channel : = 4 for Rig 1, =1 for Rig 2
 %                 andor_sync_channel: = 3 for Rig 1, =2 for Rig 2
-WS = 0;
-WSoptions.nRecsPerWell = 4;
-WSoptions.stim_sync_channel = 4;
-WSoptions.andor_sync_channel = 3;
+WSoptions.nRecsPerWell = 4; % number of recordings (stimulations) per well
+WSoptions.stim_sync_channel = 4; % channel order of the stim_sync channel
+WSoptions.andor_sync_channel = 3; % channel order of the andor_sync channel
 
 % set to 1 to recalculate segmentation in NAA_process_dir_ver4
 reprocessFlag = 1; 
@@ -174,7 +178,7 @@ plates_2018 = {
       fullfile(GECI_imaging_dir,'20180828_GCaMP96uf_analyzed/P4a-20180813_GCaMP96uf')
     };
 
-plates = plates_2018;
+plates = {fullfile(GECI_imaging_dir,'20200310_GCaMP96uf_raw/P7a-20200224_GCaMP96uf')};
 
 % makes sure plate directory is correct
 for i = 1:length(plates)
