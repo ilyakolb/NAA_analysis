@@ -24,7 +24,8 @@ if strcmpi(type, 'GCaMP96') || strcmpi(type, 'GCaMP96b') ||strcmpi(type, 'RCaMP9
     response = 'f';
     file_suffix = '';
 elseif strcmpi(type, 'mngGECO')
-    nAP = [1, 2, 3, 5, 10, 20, 40, 160];
+    % nAP = [1, 2, 3, 5, 10, 20, 40, 160];
+    nAP = [1, 2, 3, 5, 10, 40]; % adjusted for ufgcamp
     response = 'f';
     file_suffix = '';
 elseif strcmpi(type, 'GCaMP')|| strcmpi(type, 'RCaMP96c')|| strcmpi(type, 'GCaMP96c')|| strcmpi(type, 'GCaMP96d')
@@ -161,7 +162,10 @@ for i=1:length(files);
         if strcmpi(type, 'GCaMP96') || strcmpi(type, 'GCaMP96b') ||strcmpi(type, 'RCaMP96') || strcmpi(type, 'OGB1')|| strcmpi(type, 'GCaMP96z')||strcmpi(type, 'RCaMP96z')|| strcmpi(type, 'GCaMP96bf')||strcmpi(type, 'GCaMP96uf')||strcmpi(type, 'RCaMP96uf')||strcmpi(type, 'GCaMP96u')||strcmpi(type, 'RCaMP96u')
             entry={plate,well,construct,nROI,mean([cell_list.mCherry]),summary.f0(2),median(fmax),summary.f0(2)/mean([cell_list.mCherry]),summary.df_fpeak_med(1),summary.df_fpeak_med(2),summary.df_fpeak_med(3),summary.df_fpeak_med(4),median(dff_max),ES50,summary.decay_half_med(3),summary.rise_half_med(3),summary.timetopeak_med(3),summary.decay_half_med(4),temperature1(1),temperature2(1)};
         elseif strcmpi(type, 'mngGECO')
-            entry={plate,well,construct,nROI,mean([cell_list.mCherry]),summary.f0(2),median(fmax),summary.f0(2)/mean([cell_list.mCherry]),summary.df_fpeak_med(1),summary.df_fpeak_med(2),summary.df_fpeak_med(3),summary.df_fpeak_med(4),summary.df_fpeak_med(5),summary.df_fpeak_med(6),summary.df_fpeak_med(7),summary.df_fpeak_med(8),median(dff_max),ES50,summary.decay_half_med(3),summary.rise_half_med(3),summary.timetopeak_med(3),summary.decay_half_med(4),temperature1(1),temperature2(1)};
+            % entry={plate,well,construct,nROI,mean([cell_list.mCherry]),summary.f0(2),median(fmax),summary.f0(2)/mean([cell_list.mCherry]),summary.df_fpeak_med(1),summary.df_fpeak_med(2),summary.df_fpeak_med(3),summary.df_fpeak_med(4),summary.df_fpeak_med(5),summary.df_fpeak_med(6),summary.df_fpeak_med(7),summary.df_fpeak_med(8),median(dff_max),ES50,summary.decay_half_med(3),summary.rise_half_med(3),summary.timetopeak_med(3),summary.decay_half_med(4),temperature1(1),temperature2(1)};
+            
+            % modified for ufgcamp-linearity measurements
+            entry={plate,well,construct,nROI,mean([cell_list.mCherry]),summary.f0(2),median(fmax),summary.f0(2)/mean([cell_list.mCherry]),summary.df_fpeak_med(1),summary.df_fpeak_med(2),summary.df_fpeak_med(3),summary.df_fpeak_med(4),summary.df_fpeak_med(5),summary.df_fpeak_med(6),median(dff_max),ES50,summary.decay_half_med(3),summary.rise_half_med(3),summary.timetopeak_med(3),summary.decay_half_med(4),temperature1(1),temperature2(1)};
         elseif strcmpi(type, 'FRET96')
             entry={plate,well,construct,nROI,mean([cell_list.mCherry]),summary.f0(2),median(fmax),summary.f0(2)/mean([cell_list.mCherry]),summary.df_fpeak_med(1),summary.df_fpeak_med(2),summary.df_fpeak_med(3),summary.df_fpeak_med(4),median(dff_max),ES50,summary.decay_half_med(3),summary.rise_half_med(3),summary.timetopeak_med(3),summary.decay_half_med(4),temperature1(1),temperature2(1),SNR(1),SNR(2),SNR(3),SNR(4),SNR_STD(1),SNR_STD(2),SNR_STD(3),SNR_STD(4)};
         elseif strcmpi(type, 'RCaMP96b')

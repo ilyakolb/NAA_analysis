@@ -26,8 +26,10 @@ if length(files)>3 && (strncmp(plate_folder_name, 'Well', 4) || strncmp(plate_fo
             segment_file_ID = 4;
             nominal_pulse = [1,3,10,160];
         elseif strcmpi(type, 'mngGECO') % IK 11/15/19 to handle Abhi's sensor
-            segment_file_ID = 8;
-            nominal_pulse = [1,2,3,5,10,20,40,160];
+            segment_file_ID = 6; % which stim index to use for segmentation (typically last)
+            % nominal_pulse = [1,2,3,5,10,20,40,160]; % original for
+            % mngGECO
+            nominal_pulse = [1,2,3,5,10,40];
         else
             error([type ' is not a recognized sensor type!'])
         end

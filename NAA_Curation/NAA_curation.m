@@ -95,8 +95,10 @@ classdef NAA_curation < Singleton
             Protocol('GCaMP96uf', 'GCaMP2', [1, 3, 10, 160], [0.3, 0.7, 1.5, 7], [1, 1, 1, 1; 1, 1, 1, 1] / 1000, [8, 12], Construct('10.641'));
             
             % IK added 16/11/19 to process Abhi sensors
-            Protocol('mngGECO', 'GCaMP2', [1, 2, 3, 5, 10, 20, 40, 160], [0.3, 0.7, 1.5, 2, 2.5, 3, 3.5, 5], [1, 1, 1, 1; 1, 1, 1, 1] / 1000, [8, 12], Construct('10.641'));
-
+            % Protocol('mngGECO', 'GCaMP2', [1, 2, 3, 5, 10, 20, 40, 160], [0.3, 0.7, 1.5, 2, 2.5, 3, 3.5, 5], [1, 1, 1, 1; 1, 1, 1, 1] / 1000, [8, 12], Construct('10.641'));
+            % IK modified 12/15/20 for ufgcamp linearity
+            Protocol('mngGECO', 'GCaMP2', [1, 2, 3, 5, 10, 40], [0.3, 0.7, 1.5, 2, 2.5, 3.5], [1, 1, 1, 1; 1, 1, 1, 1] / 1000, [8, 12], Construct('10.641'));
+            
             FailureReason('Bad focus');
             FailureReason('Imaging problem');
             FailureReason('no red signal'); %added by Hod Dana 02032014
@@ -837,6 +839,9 @@ classdef NAA_curation < Singleton
                             
                             rises = control.rises(j, dataFilter);
                             controlRises{j} = rises(~isnan(rises) & (rises ~= 0));
+                            
+                            timetopeak = control.timetopeak(j, dataFilter);
+                            controlTTP{j} = timetopeak(~isnan(timetopeak) & (timetopeak ~= 0));
                         end
                         
                         passedWells = control.passedWells(dataFilter);
@@ -891,6 +896,11 @@ classdef NAA_curation < Singleton
                     end
                     colNum = colNum + 1;
                     for j = 1:numPulses
+                        fprintf(fid, 'timetopeak_%d_fp\t', dataFilter.protocol.nAP(j));
+                        headerRow.createCell(colNum).setCellValue(sprintf('TimeToPeak (%dFP)', dataFilter.protocol.nAP(j))); colNum = colNum + 1;
+                    end
+                    colNum = colNum + 1;
+                    for j = 1:numPulses
                         fprintf(fid, 'decay_%d_fp\t', dataFilter.protocol.nAP(j));
                         headerRow.createCell(colNum).setCellValue(sprintf('Decay (%dFP)', dataFilter.protocol.nAP(j))); colNum = colNum + 1;
                     end
@@ -932,6 +942,12 @@ classdef NAA_curation < Singleton
                             fprintf(fid, 'rise_%d_fp_p\t', dataFilter.protocol.nAP(j));
                             headerRow.createCell(colNum).setCellValue(sprintf('Rise (%dFP)(p)', dataFilter.protocol.nAP(j))); colNum = colNum + 1;
                         end
+                        colNum = colNum + 1;
+                        for j = 1:numPulses %Hod 20131123 - correcting missing header
+                            fprintf(fid, 'timetopeak_%d_fp_p\t', dataFilter.protocol.nAP(j));
+                            headerRow.createCell(colNum).setCellValue(sprintf('TimeToPeak (%dFP)(p)', dataFilter.protocol.nAP(j))); colNum = colNum + 1;
+                        end
+                        
                         colNum = colNum + 1;
                         for j = 1:numPulses
                             fprintf(fid, 'decay_%d_fp_p\t', dataFilter.protocol.nAP(j));
@@ -1056,6 +1072,32 @@ classdef NAA_curation < Singleton
                             end
                             colNum = colNum + 1;
                             
+                            % Add times to peak (TTP, full rise times)
+                            ttp = zeros(1, numPulses);
+                            timeToPeakPValue = zeros(1, numPulses);
+                            for j = 1:numPulses
+                                timetopeak = construct.timetopeak(j, dataFilter);
+                                clear ttpComp %%20151113 HD - check if helps for removing error message
+                                ttpComp(j,:) = timetopeak; %#ok<AGROW> %added by Hod 20131018
+                                nonNaNTTP = timetopeak(~isnan(timetopeak)&(timetopeak~=0)); 
+                                if adequateControls
+                                    ttp(j) = median(nonNaNTTP) / median(controlTTP{j});
+                                    if isempty(nonNaNTTP)
+                                        timeToPeakPValue(j) = NaN;
+                                    else
+                                        timeToPeakPValue(j) = ranksum(controlTTP{j}, nonNaNTTP);
+                                    end
+                                else
+                                    ttp(j) = median(nonNaNTTP);
+                                end
+                                fprintf(fid, '%f\t', ttp(j));
+                                wbCell = wbRow.createCell(colNum); colNum = colNum + 1;
+                                wbCell.setCellValue(ttp(j));
+                                if adequateControls
+                                    wbCell.setCellStyle(obj.getCellStyle(timeToPeakPValue(j), ttp(j), true));
+                                end
+                            end
+                            colNum = colNum + 1;
                             
                             % Add the decays
                             for j = 1:numPulses
@@ -1221,10 +1263,18 @@ classdef NAA_curation < Singleton
                                     fprintf(fid, '%.9f\t', risePValue(j));
                                     wbCell = wbRow.createCell(colNum); colNum = colNum + 1;
                                     wbCell.setCellValue(risePValue(j));
-                                    wbCell.setCellStyle(obj.getCellStyle(decayPValue(j), decay(j), false));
+                                    wbCell.setCellStyle(obj.getCellStyle(risePValue(j), ri(j), false));
                                 end
                                 colNum = colNum + 1;
                                 
+                                % add time-to-peak p vlues
+                                for j = 1:numPulses
+                                    fprintf(fid, '%.9f\t', timeToPeakPValue(j));
+                                    wbCell = wbRow.createCell(colNum); colNum = colNum + 1;
+                                    wbCell.setCellValue(timeToPeakPValue(j));
+                                    wbCell.setCellStyle(obj.getCellStyle(timeToPeakPValue(j), ttp(j), false));
+                                end
+                                colNum = colNum + 1;
                                 for j = 1:numPulses
                                     fprintf(fid, '%.9f\t', decayPValue(j));
                                     wbCell = wbRow.createCell(colNum); colNum = colNum + 1;
@@ -1387,9 +1437,10 @@ classdef NAA_curation < Singleton
                 movefile([dataAllTempName '_data_all_wells.txt'], fullfile(resultsDir, [dataAllName '_wells.txt']));
                 
                 % Save the spreadsheet version of the file.
-                fileStream = java.io.FileOutputStream(fullfile(resultsDir, [dataAllName '.xlsx']));
-                obj.dataAllWB.write(fileStream);
-                fileStream.close();
+                % IK 20201212 commented out below b/c it's throwing errors
+                % fileStream = java.io.FileOutputStream(fullfile(resultsDir, [dataAllName '.xlsx']));
+                % obj.dataAllWB.write(fileStream);
+                % fileStream.close();
                 
                 if createPileAllUpTo && ~isempty(controlPile)
                     pile.control = controlPile;
@@ -1415,19 +1466,21 @@ classdef NAA_curation < Singleton
                 format = obj.dataAllWB.createDataFormat();
                 
                 % Create the fonts
+                % IK 20201212 commenting out setColor because it's throwing
+                % errors
                 font = cell(7, 1);
                 font{1} = obj.dataAllWB.createFont();
-                font{1}.setColor(XSSFColor([255 0 0]));     % bright red
+                % font{1}.setColor(XSSFColor([255 0 0]));     % bright red
                 font{2} = obj.dataAllWB.createFont();
-                font{2}.setColor(XSSFColor([0 0 255]));     % bright blue
+                % font{2}.setColor(XSSFColor([0 0 255]));     % bright blue
                 font{3} = obj.dataAllWB.createFont();
-                font{3}.setColor(XSSFColor([255 96 0]));    % medium orange
+                % font{3}.setColor(XSSFColor([255 96 0]));    % medium orange
                 font{4} = obj.dataAllWB.createFont();
-                font{4}.setColor(XSSFColor([0 96 255]));    % medium blue
+                % font{4}.setColor(XSSFColor([0 96 255]));    % medium blue
                 font{5} = obj.dataAllWB.createFont();
-                font{5}.setColor(XSSFColor([255 192 0]));   % light orange
+                % font{5}.setColor(XSSFColor([255 192 0]));   % light orange
                 font{6} = obj.dataAllWB.createFont();
-                font{6}.setColor(XSSFColor([0 192 255]));   % light blue
+                % font{6}.setColor(XSSFColor([0 192 255]));   % light blue
                 font{7} = obj.dataAllWB.createFont();       % default is black
                 
                 % Create styles for indicating p-values.

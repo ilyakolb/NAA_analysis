@@ -200,6 +200,11 @@ classdef Construct < Singleton
             r = rises .* factors;
         end
         
+        function fullrises = timetopeak(obj, stimInd, dataFilter)
+            pw = obj.passedWells(dataFilter);
+            fullrises = arrayfun(@(well) well.summary.timetopeak_med(stimInd), pw);
+            
+        end
         
         function [dprime, SNR] = dprime(~, fmean,type)  %added by Hod 20131123, d-prome for 10FP added 20140603 by Hod
             if strcmp(type,'bf')

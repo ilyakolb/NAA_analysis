@@ -39,7 +39,7 @@ WS = 1;
 %                 nRecsPerWell: num stim pulses (e.g. 4)
 %                 stim_sync_channel : = 4 for Rig 1, =1 for Rig 2
 %                 andor_sync_channel: = 3 for Rig 1, =2 for Rig 2
-WSoptions.nRecsPerWell = 4; % number of recordings (stimulations) per well
+WSoptions.nRecsPerWell = 6; % number of recordings (stimulations) per well
 WSoptions.stim_sync_channel = 4; % channel order of the stim_sync channel
 WSoptions.andor_sync_channel = 3; % channel order of the andor_sync channel
 
@@ -178,7 +178,8 @@ plates_2018 = {
       fullfile(GECI_imaging_dir,'20180828_GCaMP96uf_analyzed/P4a-20180813_GCaMP96uf')
     };
 
-plates = {fullfile(GECI_imaging_dir,'20200310_GCaMP96uf_raw/P7a-20200224_GCaMP96uf')};
+% fullfile(GECI_imaging_dir,'20200310_GCaMP96uf_raw/P7a-20200224_GCaMP96uf')
+plates = {fullfile(GECI_imaging_dir,'20201215_GCaMP96uf_raw/P1a-20201130_mngGECO')};
 
 % makes sure plate directory is correct
 for i = 1:length(plates)

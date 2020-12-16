@@ -79,6 +79,14 @@ function startInteractiveMATLAB(){
 
 ## Notes
 
-- Run plates on LSF, compile data and curate on PC
-- Not recently tested with any variants other than GCaMP96uf
-- Also see instructions in run_plates.m
+ - Run plates on LSF, compile data and curate on PC
+ - Not recently tested with any variants other than GCaMP96uf
+ - Also see instructions in run_plates.m
+ - if using custom number of AP stimulations (e.g. 1,2,3,5,10,40)
+    - rename plate folder to mngGECO
+    - in NAA_process_dir_ver4.m set `nominal_pulse = [1,2,3,5,10,40]`
+    - in run_plates set `WSoptions.nRecsPerWell = 6`
+    - in NAA_pile_df_f.m: set `nAP = [1, 2, 3, 5, 10, 40]`
+    - modify `entry={plate,well,construct,` line in NAA_pile_df_f.m to have right number of fields
+    - NAA_curation modify `Protocol('mngGECO', ...` line to include correct number of APs
+    
