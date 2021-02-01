@@ -44,7 +44,10 @@ for i=1:nFiles
             [rise_half,decay_half,time_to_peak,peak_value]=fit_dynamic(-df_f,ephus_info(i).ImageTime(2:(nTime+1)),ephus_info(i).IPulseTime(1),0);
             peak_value=-peak_value;
         else
-            [rise_half,decay_half,time_to_peak,peak_value]=fit_dynamic(df_f,ephus_info(i).ImageTime(2:(nTime+1)),ephus_info(i).IPulseTime(1),0);
+            % [rise_half,decay_half,time_to_peak,peak_value]=fit_dynamic(df_f,ephus_info(i).ImageTime(2:(nTime+1)),ephus_info(i).IPulseTime(1),0);
+            % do bleach correction on 1AP data only
+            bleachCorrect = (i == 1);
+            [rise_half,decay_half,time_to_peak,peak_value]=fit_dynamic_IK(df_f,ephus_info(i).ImageTime(2:(nTime+1)),ephus_info(i).IPulseTime(1),0, bleachCorrect);
         end
         para_array(i,j).rise_half=rise_half;
         para_array(i,j).decay_half=decay_half;
@@ -73,7 +76,8 @@ for i=1:nFiles
         [rise_half(i),decay_half(i),time_to_peak(i),peak_value(i)]=fit_dynamic(-df_fmean(:,i),ephus_info(i).ImageTime(2:(nTime+1)),ephus_info(i).IPulseTime(1),0);
         peak_value(i)=-peak_value(i);
     else
-        [rise_half(i),decay_half(i),time_to_peak(i),peak_value(i)]=fit_dynamic(df_fmean(:,i),ephus_info(i).ImageTime(2:(nTime+1)),ephus_info(i).IPulseTime(1),0);
+        bleachCorrect = (i == 1) || (i == 2);
+        [rise_half(i),decay_half(i),time_to_peak(i),peak_value(i)]=fit_dynamic_IK(df_fmean(:,i),ephus_info(i).ImageTime(2:(nTime+1)),ephus_info(i).IPulseTime(1),0, bleachCorrect);
     end    
 end
 % [df_fpeak,tpeak]=max(df_fmean_filt(33:175,:));
@@ -89,7 +93,8 @@ for i=1:nFiles
         [rise_half(i),decay_half(i),time_to_peak(i),peak_value(i)]=fit_dynamic(-df_fmed(:,i),ephus_info(i).ImageTime(2:(nTime+1)),ephus_info(i).IPulseTime(1),0);
         peak_value(i)=-peak_value(i);
     else
-        [rise_half(i),decay_half(i),time_to_peak(i),peak_value(i)]=fit_dynamic(df_fmed(:,i),ephus_info(i).ImageTime(2:(nTime+1)),ephus_info(i).IPulseTime(1),0);
+        bleachCorrect = (i == 1) || (i == 2);
+        [rise_half(i),decay_half(i),time_to_peak(i),peak_value(i)]=fit_dynamic_IK(df_fmed(:,i),ephus_info(i).ImageTime(2:(nTime+1)),ephus_info(i).IPulseTime(1),0, bleachCorrect);
     end      
 end
 summary.df_fpeak_med=peak_value;
