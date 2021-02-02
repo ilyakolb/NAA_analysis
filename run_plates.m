@@ -33,13 +33,13 @@ clc
 % variable below) were run WITHOUT Wavesurfer, so set  WS = 0 if analyzing
 % those
 
-WS = 0;
+WS = 1;
 
 %       WSoptions.
 %                 nRecsPerWell: num stim pulses (e.g. 4)
 %                 stim_sync_channel : = 4 for Rig 1, =1 for Rig 2
 %                 andor_sync_channel: = 3 for Rig 1, =2 for Rig 2
-WSoptions.nRecsPerWell =       4; % number of recordings (stimulations) per well
+WSoptions.nRecsPerWell =       6; % number of recordings (stimulations) per well
 WSoptions.stim_sync_channel =  4; % channel order of the stim_sync channel
 WSoptions.andor_sync_channel = 3; % channel order of the andor_sync channel
 
@@ -203,7 +203,10 @@ plates_2018 = {
     };
 
 % fullfile(GECI_imaging_dir,'20200310_GCaMP96uf_raw/P7a-20200224_GCaMP96uf')
-plates = plates_2018;
+plates = {
+    fullfile(GECI_imaging_dir,'Non-production/20210126_GCaMP_raw/P1a-20210111_mngGECO'),
+    fullfile(GECI_imaging_dir,'Non-production/20210126_GCaMP_raw/P2a-20210111_mngGECO')
+    };
 
 % makes sure plate directory is correct
 for i = 1:length(plates)
