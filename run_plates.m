@@ -16,7 +16,7 @@
 
 % Edit these absolute paths if running for the first time!
 if isunix % if running on cluster
-    cd /groups/genie/genie/ilya/code
+    
     addpath('GECI_NAA_code')
     cd /groups/genie/genie/ilya/code/GECI_NAA_code
     addpath Neuronal_Assay_Analysis Neuronal_Assay_Analysis/compare_mutant Neuronal_Assay_Analysis/export_fig ilastik
@@ -33,14 +33,14 @@ clc
 % variable below) were run WITHOUT Wavesurfer, so set  WS = 0 if analyzing
 % those
 
-WS = 1;
+WS = 0;
 
 %       WSoptions.
 %                 nRecsPerWell: num stim pulses (e.g. 4)
 %                 stim_sync_channel : = 4 for Rig 1, =1 for Rig 2
 %                 andor_sync_channel: = 3 for Rig 1, =2 for Rig 2
-WSoptions.nRecsPerWell = 6; % number of recordings (stimulations) per well
-WSoptions.stim_sync_channel = 4; % channel order of the stim_sync channel
+WSoptions.nRecsPerWell =       4; % number of recordings (stimulations) per well
+WSoptions.stim_sync_channel =  4; % channel order of the stim_sync channel
 WSoptions.andor_sync_channel = 3; % channel order of the andor_sync channel
 
 % set to 1 to recalculate segmentation in NAA_process_dir_ver4
@@ -58,10 +58,34 @@ end
 % 20190827_GCaMP96uf_analyzed (rig 1)
 
 
+% for these, use Rig 2 parameters:
+% WSoptions.nRecsPerWell = 4; 
+% WSoptions.stim_sync_channel = 1; 
+% WSoptions.andor_sync_channel = 2; 
 plates_XCaMP = {fullfile(GECI_imaging_dir, '20191125_XCaMP_analyzed/P14a-20191111_GCaMP96uf'),...
      fullfile(GECI_imaging_dir, '20191125_XCaMP_analyzed/P15a-20191111_GCaMP96uf'),...
      fullfile(GECI_imaging_dir, '20191125_XCaMP_analyzed/P16a-20191111_GCaMP96uf')};
 
+ % 20200205 through 20200310
+plates_bests = {
+    fullfile(GECI_imaging_dir, '20200205_GCaMP96uf_analyzed/P3a-20200120_GCaMP96uf'),
+    fullfile(GECI_imaging_dir, '20200205_GCaMP96uf_analyzed/P4a-20200120_GCaMP96uf'),
+    fullfile(GECI_imaging_dir, '20200205_GCaMP96uf_analyzed/P5a-20200120_GCaMP96uf'),
+    ...
+    fullfile(GECI_imaging_dir, '20200211_GCaMP96uf_analyzed/P13a-20200127_GCaMP96uf'),
+    fullfile(GECI_imaging_dir, '20200211_GCaMP96uf_analyzed/P14a-20200127_GCaMP96uf'),
+    fullfile(GECI_imaging_dir, '20200211_GCaMP96uf_analyzed/P15a-20200127_GCaMP96uf'),
+    fullfile(GECI_imaging_dir, '20200211_GCaMP96uf_analyzed/P16a-20200127_GCaMP96uf'),
+    ...
+    fullfile(GECI_imaging_dir, '20200303_GCaMP96uf_analyzed/P1a-20200217_GCaMP96uf'),
+    fullfile(GECI_imaging_dir, '20200303_GCaMP96uf_analyzed/P2a-20200217_GCaMP96uf'),
+    fullfile(GECI_imaging_dir, '20200303_GCaMP96uf_analyzed/P3a-20200217_GCaMP96uf'),
+    fullfile(GECI_imaging_dir, '20200303_GCaMP96uf_analyzed/P4a-20200217_GCaMP96uf'),
+    ...
+    fullfile(GECI_imaging_dir, '20200310_GCaMP96uf_analyzed/P5a-20200224_GCaMP96uf'),
+    fullfile(GECI_imaging_dir, '20200310_GCaMP96uf_analyzed/P6a-20200224_GCaMP96uf'),
+    fullfile(GECI_imaging_dir, '20200310_GCaMP96uf_analyzed/P7a-20200224_GCaMP96uf')
+    };
 plates_2 = {
     fullfile(GECI_imaging_dir, '20191216_GCaMP96uf_analyzed/P13a-20191202_GCaMP96uf'),...
     fullfile(GECI_imaging_dir, '20191216_GCaMP96uf_analyzed/P14a-20191202_GCaMP96uf'),...
@@ -179,7 +203,7 @@ plates_2018 = {
     };
 
 % fullfile(GECI_imaging_dir,'20200310_GCaMP96uf_raw/P7a-20200224_GCaMP96uf')
-plates = {fullfile(GECI_imaging_dir,'20201215_GCaMP96uf_raw/P1a-20201130_mngGECO')};
+plates = plates_2018;
 
 % makes sure plate directory is correct
 for i = 1:length(plates)
