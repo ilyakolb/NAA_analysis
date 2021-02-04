@@ -1438,9 +1438,9 @@ classdef NAA_curation < Singleton
                 
                 % Save the spreadsheet version of the file.
                 % IK 20201212 commented out below b/c it's throwing errors
-                % fileStream = java.io.FileOutputStream(fullfile(resultsDir, [dataAllName '.xlsx']));
-                % obj.dataAllWB.write(fileStream);
-                % fileStream.close();
+                fileStream = java.io.FileOutputStream(fullfile(resultsDir, [dataAllName '.xlsx']));
+                obj.dataAllWB.write(fileStream);
+                fileStream.close();
                 
                 if createPileAllUpTo && ~isempty(controlPile)
                     pile.control = controlPile;
