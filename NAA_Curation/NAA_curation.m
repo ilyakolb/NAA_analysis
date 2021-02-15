@@ -1316,6 +1316,7 @@ classdef NAA_curation < Singleton
                                 mutantPile(end).nreplicate = numReplicates;
                                 mutantPile(end).df_fpeak_med = [];
                                 mutantPile(end).decay_half_med = [];
+                                mutantPile(end).decay_half_mean = [];
                                 mutantPile(end).rise_half_med = [];
                                 mutantPile(end).timetopeak_med = [];
                                 mutantPile(end).temperature = [];
@@ -1354,6 +1355,7 @@ classdef NAA_curation < Singleton
                                     % Add to mutant pile.
                                     mutantPile(end).df_fpeak_med = horzcat(mutantPile(end).df_fpeak_med, well.summary.df_fpeak_med);
                                     mutantPile(end).decay_half_med = horzcat(mutantPile(end).decay_half_med, well.summary.decay_half_med);
+                                    mutantPile(end).decay_half_mean = horzcat(mutantPile(end).decay_half_mean, well.summary.decay_half);
                                     mutantPile(end).rise_half_med = horzcat(mutantPile(end).rise_half_med, well.summary.rise_half_med);
                                     mutantPile(end).timetopeak_med = horzcat(mutantPile(end).timetopeak_med, well.summary.timetopeak_med);
                                     mutantPile(end).temperature(j, 1) = well.temperature();

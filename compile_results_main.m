@@ -13,8 +13,7 @@ else
     addpath Neuronal_Assay_Analysis POI
 end
 
-compile_results(fullfile(GECI_imaging_dir, '20191005_GCaMP96uf_analyzed'),'GCaMP96uf','0')
-compile_results(fullfile(GECI_imaging_dir, '20191022_GCaMP96uf_analyzed'),'GCaMP96uf','0')
+compile_results(fullfile(GECI_imaging_dir, '20210202_GCaMP_raw'),'mngGECO','0')
 
 % all plates ever 
 % compile_results(fullfile(GECI_imaging_dir, '20200205_GCaMP96uf_analyzed'),'GCaMP96uf','0')
