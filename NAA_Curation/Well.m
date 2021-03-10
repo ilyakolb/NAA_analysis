@@ -232,7 +232,7 @@ classdef Well < VirtualFileObject
                         loaded = [obj loaded(:)'];
                     end
                 else
-                    fprintf('No data files could be found for well %s in %s.\n', obj.name, obj.path);
+                    % fprintf('No data files could be found for well %s in %s.\n', obj.name, obj.path);
                 end
             end
             

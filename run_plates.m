@@ -195,8 +195,7 @@ plates_2018 = {
 % fullfile(GECI_imaging_dir,'20200310_GCaMP96uf_raw/P7a-20200224_GCaMP96uf')
 
 plates = {
-    fullfile(GECI_imaging_dir,'20210202_GCaMP_raw/P1a-20210118_mngGECO'),
-    fullfile(GECI_imaging_dir,'20210202_GCaMP_raw/P2a-20210118_mngGECO')
+    fullfile(GECI_imaging_dir,'20210224_GCaMPlinearity_analyzed/P2a-20210208_mngGECO')
     };
 
 % makes sure plate directory is correct

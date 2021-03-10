@@ -4,16 +4,17 @@
 
 clc
 if isunix
-    cd /groups/genie/genie/ilya/code/GECI_NAA_code
-    GECI_imaging_dir = '/groups/genie/genie/GECIScreenData/GECI_Imaging_Data';
-    addpath POI
+    error('Do not run on linux!')
+    % cd /groups/genie/genie/ilya/code/GECI_NAA_code
+    % GECI_imaging_dir = '/groups/genie/genie/GECIScreenData/GECI_Imaging_Data';
+    % addpath POI
 else
     GECI_imaging_dir = 'Z:\GECIScreenData\GECI_Imaging_Data';
     cd Z:\ilya\code\GECI_NAA_code
     addpath Neuronal_Assay_Analysis POI
 end
 
-compile_results(fullfile(GECI_imaging_dir, '20210202_GCaMP_raw'),'mngGECO','0')
+compile_results(fullfile(GECI_imaging_dir, '20210224_GCaMPlinearity_analyzed'),'mngGECO','0')
 
 % all plates ever 
 % compile_results(fullfile(GECI_imaging_dir, '20200205_GCaMP96uf_analyzed'),'GCaMP96uf','0')
