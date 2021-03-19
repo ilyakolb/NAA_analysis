@@ -206,6 +206,73 @@ classdef Construct < Singleton
             
         end
         
+
+        function [dprime, SNR] =  dprimeAndSNR(~, fmean,~)
+            % calculate d prime and SNR: average all cells for each well
+            % inputs:
+            %        fmean: [1x n_wells] cell array of [t x nAPs x nCells]
+            %        type: assume ultra-fast ('uf')
+            % assume stimulation happens at t = 200 frames
+            % outputs:
+            %         dprime: [nAPs x nWells] sensitivity index
+            %         SNR: [nAPs x nWells] SNR
+            
+            nAPs = size(fmean{1},2);
+            nWells = size(fmean,2);
+            nFrames = size(fmean{1},1);
+            
+            dprime = nan(nAPs, nWells);
+            SNR = dprime;
+            
+            % baseline
+            stim_frame = 200;
+            baseline_start= 150;
+            duration_frames = 30;
+            baseline_frames = baseline_start + (1:duration_frames)';
+            
+            for w = 1:nWells
+                fmean_well = double(fmean{w});
+                ncells = size(fmean_well,3);
+                for apidx = 1:nAPs
+                    dprime_well_array = nan(ncells,1);
+                    SNR_well_array = dprime_well_array;
+                    for cellidx = 1:ncells
+                        trace = squeeze(fmean_well(:,apidx, cellidx));
+                        baseline_segment = trace(baseline_frames);
+                        [~,peak_idx] = max(trace(stim_frame:end));
+                        peak_idx = peak_idx + stim_frame-1;
+                        
+                        % mis-identified peak -- set values to nan and move on
+                        if peak_idx + duration_frames >= nFrames
+                            dprime_well_array(cellidx) = NaN;
+                            SNR_well_array(cellidx) = NaN;
+                            continue;
+                        end
+                        
+                        peak_segment = trace(peak_idx + (0:duration_frames-1));
+                        
+                        % simple bleach correction (linear fit)
+                        c = polyfit(baseline_frames,baseline_segment,1);
+                        slope = c(1);
+                        index_diff = peak_idx - baseline_start;
+                        peak_segment_corrected = peak_segment - index_diff*slope - (1:duration_frames)'.*slope;
+                        
+                        cell_SNR = (mean(peak_segment_corrected) - mean(baseline_segment))/std(baseline_segment);
+                        cell_dp = abs(mean(peak_segment_corrected) - mean(baseline_segment)) / sqrt(0.5 * var(peak_segment_corrected) + var(baseline_segment));
+                        
+                        dprime_well_array(cellidx) = cell_dp;
+                        SNR_well_array(cellidx) = cell_SNR;
+                        
+                    end
+                    dprime(apidx, w) = nanmedian(dprime_well_array);
+                    SNR(apidx, w) = nanmedian(SNR_well_array);
+                    
+                end
+            end
+            
+            
+            
+        end
         function [dprime, SNR] = dprime(~, fmean,type)  %added by Hod 20131123, d-prome for 10FP added 20140603 by Hod
             if strcmp(type,'bf')
                 base_time=1:150;

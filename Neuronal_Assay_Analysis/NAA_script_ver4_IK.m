@@ -93,7 +93,7 @@ if strcmpi(type, 'FRET')
             [YFP_vec_ord indY]=sort(YFP_vec);
             thY=YFP_vec_ord(round(0.9*length(YFP_vec)));
             YFP_vec(YFP_vec<thY)=0;
-            YFP_im=reshape(YFP_vec,size(YFP_im));
+            YFP_im=reshape(YFP_vec,size(YFP_im)); 
             
             CFP_im=mean(CFP(:,:,1:25),3);
             CFP_vec=reshape(CFP_im,1,[]);

@@ -94,10 +94,10 @@ classdef NAA_curation < Singleton
             Protocol('GCaMP96u', 'GCaMP', [1, 3, 10, 160], [0.3, 0.7, 1.5, 7], [1, 1, 1, 1; 1, 1, 1, 1] / 1000, [8, 12], Construct('10.641'));          
             
             % GCaMP6s as control
-            % Protocol('GCaMP96uf', 'GCaMP2', [1, 3, 10, 160], [0.3, 0.7, 1.5, 7], [1, 1, 1, 1; 1, 1, 1, 1] / 1000, [8, 12], Construct('10.641'));
+            Protocol('GCaMP96uf', 'GCaMP2', [1, 3, 10, 160], [0.3, 0.7, 1.5, 7], [1, 1, 1, 1; 1, 1, 1, 1] / 1000, [8, 12], Construct('10.641'));
             
             % jG7f as control
-            Protocol('GCaMP96uf', 'GCaMP2', [1, 3, 10, 160], [0.3, 0.7, 1.5, 7], [1, 1, 1, 1; 1, 1, 1, 1] / 1000, [8, 12], Construct('10.921'));
+            % Protocol('GCaMP96uf', 'GCaMP2', [1, 3, 10, 160], [0.3, 0.7, 1.5, 7], [1, 1, 1, 1; 1, 1, 1, 1] / 1000, [8, 12], Construct('10.921'));
             
             % IK added 16/11/19 to process Abhi sensors
             % Protocol('mngGECO', 'GCaMP2', [1, 2, 3, 5, 10, 20, 40, 160], [0.3, 0.7, 1.5, 2, 2.5, 3, 3.5, 5], [1, 1, 1, 1; 1, 1, 1, 1] / 1000, [8, 12], Construct('10.641'));
@@ -1144,7 +1144,7 @@ classdef NAA_curation < Singleton
                                     well.fMean=fmean_bgremoved_estimation;
                                     fm{end + 1} = fmean_bgremoved_estimation;
                                 end
-                                [dprime, SNR] = construct.dprime(fm,type); %modified HD 20150728
+                                [dprime, SNR] = construct.dprimeAndSNR(fm, type); % IK modified 3/11/21 %construct.dprime(fm,type); %modified HD 20150728
                                 fprintf(fid, '%f\t', dprime(1));
                                 wbCell = wbRow.createCell(colNum); colNum = colNum + 1;              
                                 wbCell.setCellValue(dprime(1));
@@ -1402,7 +1402,7 @@ classdef NAA_curation < Singleton
                                         ||strcmp(passedWells(1,1).parent.protocol.name,'GCaMP96b-ERtag')||strcmp(passedWells(1,1).parent.protocol.name,'OGB1')||strcmp(passedWells(1,1).parent.protocol.name,'RCaMP96c')...
                                         ||strcmp(passedWells(1,1).parent.protocol.name,'GCaMP96z')||strcmp(passedWells(1,1).parent.protocol.name,'RCaMP96z')||strcmp(passedWells(1,1).parent.protocol.name,'GCaMP96bf')||strcmp(passedWells(1,1).parent.protocol.name,'GCaMP96c')||strcmp(passedWells(1,1).parent.protocol.name,'GCaMP96d')...
                                         ||strcmp(passedWells(1,1).parent.protocol.name,'GCaMP96u')||strcmp(passedWells(1,1).parent.protocol.name,'GCaMP96uf')||strcmp(passedWells(1,1).parent.protocol.name,'mngGECO')||strcmp(passedWells(1,1).parent.protocol.name,'RCaMP96u')||strcmp(passedWells(1,1).parent.protocol.name,'RCaMP96uf')%modified Hod 20140119, OGB1 SNR added 20140408
-                                    [dprime,SNR]=construct.dprime(mutantPile(end).fmean,type);
+                                    [dprime,SNR]= construct.dprimeAndSNR(mutantPile(end).fmean,type); % IK modified 3/11/21 % construct.dprime(mutantPile(end).fmean,type);
                                     
                                     mutantPile(end).dprime=dprime;
                                     mutantPile(end).SNR=SNR;
