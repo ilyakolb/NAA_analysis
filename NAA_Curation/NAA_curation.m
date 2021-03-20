@@ -869,7 +869,7 @@ classdef NAA_curation < Singleton
                                     fm{end + 1} =well.fMean;
                             end
                             type=dataAllName(end-1:end);
-                            [controldprime controlSNR] = control.dprime(fm,type);
+                            [controlDprime, controlSNR] = control.dprimeAndSNR(fm,type);
                             clear fm
                         end
                         
@@ -1130,6 +1130,8 @@ classdef NAA_curation < Singleton
                             colNum = colNum + 1;
                             
                             %Hod 20131123 add dprime and SNR data
+                            SNR = zeros(1,numPulses);
+                            SNRPValue = SNR;
                             if strcmp(passedWells(1,1).parent.protocol.name,'RCaMP96b')||strcmp(passedWells(1,1).parent.protocol.name,'GCaMP96')...
                                     ||strcmp(passedWells(1,1).parent.protocol.name,'GCaMP96b')||strcmp(passedWells(1,1).parent.protocol.name,'GCaMP96b-ERtag')...
                                     ||strcmp(passedWells(1,1).parent.protocol.name,'OGB1')||strcmp(passedWells(1,1).parent.protocol.name,'RCaMP96c')...
@@ -1144,25 +1146,26 @@ classdef NAA_curation < Singleton
                                     well.fMean=fmean_bgremoved_estimation;
                                     fm{end + 1} = fmean_bgremoved_estimation;
                                 end
-                                [dprime, SNR] = construct.dprimeAndSNR(fm, type); % IK modified 3/11/21 %construct.dprime(fm,type); %modified HD 20150728
-                                fprintf(fid, '%f\t', dprime(1));
+                                [constructDprime, constructSNR] = construct.dprimeAndSNR(fm, type); % IK modified 3/11/21 %construct.dprime(fm,type); %modified HD 20150728
+                                fprintf(fid, '%f\t', constructDprime(1));
                                 wbCell = wbRow.createCell(colNum); colNum = colNum + 1;              
-                                wbCell.setCellValue(dprime(1));
+                                wbCell.setCellValue(constructDprime(1));
                                 if strcmp(passedWells(1,1).parent.protocol.name,'RCaMP96c') %HD 20150728
-                                    fprintf(fid, '%f\t', dprime(5));
+                                    fprintf(fid, '%f\t', constructDprime(5));
                                     wbCell = wbRow.createCell(colNum); colNum = colNum + 1;
-                                    wbCell.setCellValue(dprime(5));
+                                    wbCell.setCellValue(constructDprime(5));
                                 else
-                                    fprintf(fid, '%f\t', dprime(3));
+                                    fprintf(fid, '%f\t', constructDprime(3));
                                     wbCell = wbRow.createCell(colNum); colNum = colNum + 1;
-                                    wbCell.setCellValue(dprime(3));
+                                    wbCell.setCellValue(constructDprime(3));
                                 end
                                 for j = 1:numPulses
-                                    fprintf(fid, '%f\t', median(SNR(j,:)));
+                                    SNR(j) = median(constructSNR(j,:)) / median(controlSNR(j,:)); % calc normalized SNR
+                                    fprintf(fid, '%f\t', SNR(j));
                                     wbCell = wbRow.createCell(colNum); colNum = colNum + 1;
-                                    wbCell.setCellValue(median(SNR(j,:)));
-                                    SNRPValue(j)=ranksum(controlSNR(j,:),SNR(j,:));
-                                    wbCell.setCellStyle(obj.getCellStyle(SNRPValue(j), median(SNR(j,:)), true));
+                                    wbCell.setCellValue(SNR(j));
+                                    SNRPValue(j)=ranksum(controlSNR(j,:),constructSNR(j,:));
+                                    % wbCell.setCellStyle(obj.getCellStyle(SNRPValue(j), median(SNR(j,:)), true));
                                 end
                                 colNum = colNum + 1;
                             end
@@ -1300,7 +1303,7 @@ classdef NAA_curation < Singleton
                                         fprintf(fid, '%.9f\t', SNRPValue(j));
                                         wbCell = wbRow.createCell(colNum); colNum = colNum + 1;
                                         wbCell.setCellValue(SNRPValue(j));
-                                        wbCell.setCellStyle(obj.getCellStyle(SNRPValue(j), median(SNR(j,:)), false));
+                                        % wbCell.setCellStyle(obj.getCellStyle(SNRPValue(j), median(SNR(j,:)), false));
                                     end
                                     colNum = colNum + 1;
                                     %end of addition
