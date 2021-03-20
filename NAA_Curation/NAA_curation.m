@@ -858,9 +858,9 @@ classdef NAA_curation < Singleton
                                 ||strcmp(passedWells(1,1).parent.protocol.name,'mngGECO')%SNR added 20140408 Hod, RCaMP96z on 20161130, GCaMP96bf on 20170310
                             % snr and dprime data added Hod 20131123
                             fm=[];
-                            for j=1:controlCount
+                            for k=1:controlCount
                                 
-                                well = passedWells(j);
+                                well = passedWells(k);
 %                                 bg=myprctile(well.baseImage,2);  %HD 20140603, estimation of image background
 %                                 fmean_bgremoved_estimation=well.fMean-bg;
 %                                 well.fMean=fmean_bgremoved_estimation;
@@ -874,7 +874,7 @@ classdef NAA_curation < Singleton
                         end
                         
                         [controlDates, controlBrightness] = control.brightness(dataFilter);
-                        controlDeltaFmaxF0 = control.deltaFmaxF0(dataFilter);
+                        controlDeltaFmaxF0 = []; % control.deltaFmaxF0(dataFilter);
                     end
                 
                     % Header
@@ -1227,8 +1227,8 @@ classdef NAA_curation < Singleton
                                 else
                                     normF0PValue = ranksum(nControlBrightness, brightness);
                                 end
-                                deltaFmaxF0 = construct.deltaFmaxF0(dataFilter);
-                                normDeltaFmaxF0 = median(deltaFmaxF0) / median(controlDeltaFmaxF0);
+                                deltaFmaxF0 = []; %construct.deltaFmaxF0(dataFilter);
+                                normDeltaFmaxF0 = []; % median(deltaFmaxF0) / median(controlDeltaFmaxF0);
                                 if isempty(deltaFmaxF0) || isempty(controlDeltaFmaxF0)
                                     deltaFmaxF0PValue = NaN;
                                 else

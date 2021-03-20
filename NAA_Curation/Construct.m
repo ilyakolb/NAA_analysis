@@ -33,7 +33,8 @@ classdef Construct < Singleton
             
             if isfield(dataFilter, 'passedWells')
                 % Use the cached list.
-                pw = dataFilter.passedWells;
+                disp('tried to use passedWells list')
+                % pw = dataFilter.passedWells;
             else
                 % Calculate the list of wells that passed.
                 if isfield(dataFilter, 'minImagingDate')
