@@ -1231,7 +1231,7 @@ classdef NAA_curation < Singleton
                                     normF0PValue = ranksum(nControlBrightness, brightness);
                                 end
                                 deltaFmaxF0 = []; %construct.deltaFmaxF0(dataFilter);
-                                normDeltaFmaxF0 = []; % median(deltaFmaxF0) / median(controlDeltaFmaxF0);
+                                normDeltaFmaxF0 = nan; % median(deltaFmaxF0) / median(controlDeltaFmaxF0);
                                 if isempty(deltaFmaxF0) || isempty(controlDeltaFmaxF0)
                                     deltaFmaxF0PValue = NaN;
                                 else

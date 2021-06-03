@@ -16,8 +16,8 @@ kolbi@janelia.hhmi.org
 
 MATLAB 2017a+  
 Image Processing Toolbox  
-Access to Janelia high performance computing cluster
-ilastik (see below)
+Access to Janelia high performance computing cluster  
+ilastik (see below)  
 
 ## Installation
 Download code to a location on your computer. If you will analyze plates using Janelia's LSF cluster, download the code to a location accessible by the cluster (e.g. dm11)  
