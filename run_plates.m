@@ -194,10 +194,7 @@ plates_2018 = {
 
 % fullfile(GECI_imaging_dir,'20200310_GCaMP96uf_raw/P7a-20200224_GCaMP96uf')
 
-plates = {
-    fullfile(GECI_imaging_dir,'20210518_GCaMP_raw/P3a-20210503_GCaMP96uf'),...
-    fullfile(GECI_imaging_dir,'20210518_GCaMP_raw/P4a-20210503_GCaMP96uf')
-    };
+plates = plates_newbatch;
 
 % makes sure plate directory is correct
 for i = 1:length(plates)

@@ -228,9 +228,9 @@ classdef Construct < Singleton
             % baseline
             stim_frame = 200;
             baseline_start= 150;
-            duration_frames = 30;
+            duration_frames = 6; % corresponds to 50 ms assuming 200 Hz
             baseline_frames = baseline_start + (1:duration_frames)';
-            
+            bleaching_curve_fit_frames = 100;
             for w = 1:nWells
                 fmean_well = double(fmean{w});
                 ncells = size(fmean_well,3);
@@ -249,16 +249,23 @@ classdef Construct < Singleton
                             SNR_well_array(cellidx) = NaN;
                             continue;
                         end
-                        
+
                         peak_segment = trace(peak_idx + (0:duration_frames-1));
                         
                         % simple bleach correction (linear fit)
-                        c = polyfit(baseline_frames,baseline_segment,1);
+                        cf_frames = baseline_frames(end)-[bleaching_curve_fit_frames:-1:0];
+                        cf_segment = trace(cf_frames);
+                        c = polyfit(cf_frames,cf_segment,1);
                         slope = c(1);
                         index_diff = peak_idx - baseline_start;
                         peak_segment_corrected = peak_segment - index_diff*slope - (1:duration_frames)'.*slope;
                         
-                        cell_SNR = (mean(peak_segment_corrected) - mean(baseline_segment))/std(baseline_segment);
+                        if slope < 0
+                            peak_segment_corrected = peak_segment;
+                        end
+                        % cell_SNR = (mean(peak_segment_corrected) - mean(baseline_segment))/std(baseline_segment);
+                        cell_SNR = (mean(peak_segment_corrected) - mean(baseline_segment))/sqrt(var(baseline_segment) + var(peak_segment_corrected));
+                        cell_SNR = abs(cell_SNR);
                         cell_dp = abs(mean(peak_segment_corrected) - mean(baseline_segment)) / sqrt(0.5 * var(peak_segment_corrected) + var(baseline_segment));
                         
                         dprime_well_array(cellidx) = cell_dp;
