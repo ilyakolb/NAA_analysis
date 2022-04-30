@@ -263,10 +263,10 @@ classdef Construct < Singleton
                         if slope < 0
                             peak_segment_corrected = peak_segment;
                         end
-                        % cell_SNR = (mean(peak_segment_corrected) - mean(baseline_segment))/std(baseline_segment);
-                        cell_SNR = (mean(peak_segment_corrected) - mean(baseline_segment))/sqrt(var(baseline_segment) + var(peak_segment_corrected));
-                        cell_SNR = abs(cell_SNR);
-                        cell_dp = abs(mean(peak_segment_corrected) - mean(baseline_segment)) / sqrt(0.5 * var(peak_segment_corrected) + var(baseline_segment));
+                        cell_SNR = abs((mean(peak_segment_corrected) - mean(baseline_segment))/std(baseline_segment));
+                        % cell_SNR = (mean(peak_segment_corrected) - mean(baseline_segment))/sqrt(var(baseline_segment) + var(peak_segment_corrected));
+                        % cell_SNR = abs(cell_SNR);
+                        cell_dp = abs((mean(peak_segment_corrected) - mean(baseline_segment))/sqrt(0.5*(var(baseline_segment) + var(peak_segment_corrected))));
                         
                         dprime_well_array(cellidx) = cell_dp;
                         SNR_well_array(cellidx) = cell_SNR;
