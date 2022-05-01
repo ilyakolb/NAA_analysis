@@ -915,10 +915,10 @@ classdef NAA_curation < Singleton
                             ||strcmp(passedWells(1,1).parent.protocol.name,'GCaMP96b-ERtag')||strcmp(passedWells(1,1).parent.protocol.name,'OGB1')||strcmp(passedWells(1,1).parent.protocol.name,'RCaMP96c')||...
                             strcmp(passedWells(1,1).parent.protocol.name,'GCaMP96z')||strcmp(passedWells(1,1).parent.protocol.name,'RCaMP96z')||strcmp(passedWells(1,1).parent.protocol.name,'GCaMP96bf')||strcmp(passedWells(1,1).parent.protocol.name,'GCaMP96c')||strcmp(passedWells(1,1).parent.protocol.name,'GCaMP96d')...
                             ||strcmp(passedWells(1,1).parent.protocol.name,'GCaMP96u')||strcmp(passedWells(1,1).parent.protocol.name,'GCaMP96uf')||strcmp(passedWells(1,1).parent.protocol.name,'mngGECO')||strcmp(passedWells(1,1).parent.protocol.name,'RCaMP96u')||strcmp(passedWells(1,1).parent.protocol.name,'RCaMP96uf')%modified Hod 20140119, and add OGB1 SNR 20140408, RCaMP96z 20161130. u and uf 20170727
-                        fprintf(fid, 'dprime1\t');
-                        headerRow.createCell(colNum).setCellValue('d-Prime1'); colNum = colNum + 1; %added by Hod 20131123 - dprime and SNR data
-                        fprintf(fid, 'dprime10\t');
-                        headerRow.createCell(colNum).setCellValue('d-Prime10'); colNum = colNum + 1; %added by Hod 20140602 - dprime for 10FP
+                        for j = 1:numPulses
+                            fprintf(fid, 'dprime_%d_fp\t', dataFilter.protocol.nAP(j));
+                            headerRow.createCell(colNum).setCellValue(sprintf('dprime (%dFP)', dataFilter.protocol.nAP(j))); colNum = colNum + 1;
+                        end
                         for j = 1:numPulses
                             fprintf(fid, 'snr_%d_fp\t', dataFilter.protocol.nAP(j));
                             headerRow.createCell(colNum).setCellValue(sprintf('SNR (%dFP)', dataFilter.protocol.nAP(j))); colNum = colNum + 1;
@@ -965,6 +965,10 @@ classdef NAA_curation < Singleton
                                 ||strcmp(passedWells(1,1).parent.protocol.name,'GCaMP96u')||strcmp(passedWells(1,1).parent.protocol.name,'GCaMP96uf')||strcmp(passedWells(1,1).parent.protocol.name,'mngGECO')||strcmp(passedWells(1,1).parent.protocol.name,'RCaMP96u')||strcmp(passedWells(1,1).parent.protocol.name,'RCaMP96uf')%modified Hod 20140119
                             %                         fprintf(fid, 'dprime_p\t'); %Hod 20131123 - adding dprime and SNR data
                             %                         headerRow.createCell(colNum).setCellValue('d-Prime(p)'); colNum = colNum + 1;
+                            for j = 1:numPulses
+                                fprintf(fid, 'dprime_%d_fp_p\t', dataFilter.protocol.nAP(j));
+                                headerRow.createCell(colNum).setCellValue(sprintf('dprime (%dFP)(p)', dataFilter.protocol.nAP(j))); colNum = colNum + 1;
+                            end
                             for j = 1:numPulses
                                 fprintf(fid, 'snr_%d_fp_p\t', dataFilter.protocol.nAP(j));
                                 headerRow.createCell(colNum).setCellValue(sprintf('SNR (%dFP)(p)', dataFilter.protocol.nAP(j))); colNum = colNum + 1;
@@ -1040,7 +1044,7 @@ classdef NAA_curation < Singleton
                                 else
                                     response(j) = median(mutantResponses(j, :));
                                 end
-                                fprintf(fid, '%.2f\t', response(j));
+                                fprintf(fid, '%f\t', response(j));
                                 wbCell = wbRow.createCell(colNum); colNum = colNum + 1;
                                 wbCell.setCellValue(response(j));
                                 if adequateControls
@@ -1131,7 +1135,9 @@ classdef NAA_curation < Singleton
                             
                             %Hod 20131123 add dprime and SNR data
                             SNR = zeros(1,numPulses);
+                            dprime = SNR;
                             SNRPValue = SNR;
+                            dprimePvalue = SNRPValue;
                             if strcmp(passedWells(1,1).parent.protocol.name,'RCaMP96b')||strcmp(passedWells(1,1).parent.protocol.name,'GCaMP96')...
                                     ||strcmp(passedWells(1,1).parent.protocol.name,'GCaMP96b')||strcmp(passedWells(1,1).parent.protocol.name,'GCaMP96b-ERtag')...
                                     ||strcmp(passedWells(1,1).parent.protocol.name,'OGB1')||strcmp(passedWells(1,1).parent.protocol.name,'RCaMP96c')...
@@ -1147,17 +1153,12 @@ classdef NAA_curation < Singleton
                                     fm{end + 1} = fmean_bgremoved_estimation;
                                 end
                                 [constructDprime, constructSNR] = construct.dprimeAndSNR(fm, type); % IK modified 3/11/21 %construct.dprime(fm,type); %modified HD 20150728
-                                fprintf(fid, '%f\t', constructDprime(1));
-                                wbCell = wbRow.createCell(colNum); colNum = colNum + 1;              
-                                wbCell.setCellValue(constructDprime(1));
-                                if strcmp(passedWells(1,1).parent.protocol.name,'RCaMP96c') %HD 20150728
-                                    fprintf(fid, '%f\t', constructDprime(5));
+                                for j = 1:numPulses
+                                    dprime(j) = median(constructDprime(j,:)) / median(controlDprime(j,:)); % calc normalized dprime
+                                    fprintf(fid, '%f\t', dprime(j));
                                     wbCell = wbRow.createCell(colNum); colNum = colNum + 1;
-                                    wbCell.setCellValue(constructDprime(5));
-                                else
-                                    fprintf(fid, '%f\t', constructDprime(3));
-                                    wbCell = wbRow.createCell(colNum); colNum = colNum + 1;
-                                    wbCell.setCellValue(constructDprime(3));
+                                    wbCell.setCellValue(dprime(j));
+                                    dprimePvalue(j)=ranksum(controlDprime(j,:),constructDprime(j,:));
                                 end
                                 for j = 1:numPulses
                                     SNR(j) = median(constructSNR(j,:)) / median(controlSNR(j,:)); % calc normalized SNR
@@ -1291,7 +1292,7 @@ classdef NAA_curation < Singleton
                                 end
                                 colNum = colNum + 1;
                                 
-                                % add SNR p values (no pvalues for d prime)
+                                % add SNR p values
                                 % Hod 20131123
                                 if strcmp(passedWells(1,1).parent.protocol.name,'RCaMP96b')||strcmp(passedWells(1,1).parent.protocol.name,'GCaMP96')...
                                         ||strcmp(passedWells(1,1).parent.protocol.name,'GCaMP96b')||strcmp(passedWells(1,1).parent.protocol.name,'GCaMP96b-ERtag')...
@@ -1299,6 +1300,11 @@ classdef NAA_curation < Singleton
                                         ||strcmp(passedWells(1,1).parent.protocol.name,'GCaMP96z')||strcmp(passedWells(1,1).parent.protocol.name,'RCaMP96z')...
                                         ||strcmp(passedWells(1,1).parent.protocol.name,'GCaMP96bf')||strcmp(passedWells(1,1).parent.protocol.name,'GCaMP96c')||strcmp(passedWells(1,1).parent.protocol.name,'GCaMP96d')...
                                         ||strcmp(passedWells(1,1).parent.protocol.name,'GCaMP96u')||strcmp(passedWells(1,1).parent.protocol.name,'GCaMP96uf')||strcmp(passedWells(1,1).parent.protocol.name,'mngGECO')||strcmp(passedWells(1,1).parent.protocol.name,'RCaMP96u')||strcmp(passedWells(1,1).parent.protocol.name,'RCaMP96uf')%modified Hod 20140119, added OGB1 SNR 20140408
+                                    for j = 1:numPulses
+                                        fprintf(fid, '%.9f\t', dprimePvalue(j));
+                                        wbCell = wbRow.createCell(colNum); colNum = colNum + 1;
+                                        wbCell.setCellValue(dprimePvalue(j));
+                                    end
                                     for j = 1:numPulses
                                         fprintf(fid, '%.9f\t', SNRPValue(j));
                                         wbCell = wbRow.createCell(colNum); colNum = colNum + 1;
@@ -1349,7 +1355,6 @@ classdef NAA_curation < Singleton
                                         ||strcmp(passedWells(1,1).parent.protocol.name,'GCaMP96z')||strcmp(passedWells(1,1).parent.protocol.name,'RCaMP96z')...
                                         ||strcmp(passedWells(1,1).parent.protocol.name,'GCaMP96bf')||strcmp(passedWells(1,1).parent.protocol.name,'GCaMP96c')||strcmp(passedWells(1,1).parent.protocol.name,'GCaMP96d')...
                                         ||strcmp(passedWells(1,1).parent.protocol.name,'GCaMP96u')||strcmp(passedWells(1,1).parent.protocol.name,'GCaMP96uf')||strcmp(passedWells(1,1).parent.protocol.name,'mngGECO')||strcmp(passedWells(1,1).parent.protocol.name,'RCaMP96u')||strcmp(passedWells(1,1).parent.protocol.name,'RCaMP96uf')%modified Hod 20140119, OGB1 added 20140408
-                                    mutantPile(end).dprime1=[];
                                     mutantPile(end).SNR=[];
                                     mutantPile(end).SNR_med=[];
                                 end
